@@ -72,18 +72,25 @@ auto Shader::use() const -> void
   }
 }
 
+auto Shader::setMat2(const std::string &name, const glm::mat2 &mat) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniformMatrix2fv(location, 1, GL_FALSE, &mat[0][0]);
+}
+
+auto Shader::setMat3(const std::string &name, const glm::mat3 &mat) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniformMatrix3fv(location, 1, GL_FALSE, &mat[0][0]);
+}
+
 auto Shader::setMat4(const std::string &name, const glm::mat4 &mat) const -> void
 {
   use();
   int location = Shader::getUniformLocation(name);
   glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]);
-}
-
-auto Shader::setVec3(const std::string &name, const glm::vec3 &value) const -> void
-{
-  use();
-  int location = Shader::getUniformLocation(name);
-  glUniform3fv(location, 1, &value[0]);
 }
 
 auto Shader::setFloat(const std::string &name, float value) const -> void
@@ -105,6 +112,41 @@ auto Shader::setVec2(const std::string &name, const glm::vec2 &value) const -> v
   use();
   int location = Shader::getUniformLocation(name);
   glUniform2fv(location, 1, &value[0]);
+}
+
+auto Shader::setVec2(const std::string &name, float x, float y) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform2f(location, x, y);
+}
+
+auto Shader::setVec3(const std::string &name, const glm::vec3 &value) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform3fv(location, 1, &value[0]);
+}
+
+auto Shader::setVec3(const std::string &name, float x, float y, float z) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform3f(location, x, y, z);
+}
+
+auto Shader::setVec4(const std::string &name, const glm::vec4 &value) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform4fv(location, 1, &value[0]);
+}
+
+auto Shader::setVec4(const std::string &name, float x, float y, float z, float w) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform4f(location, x, y, z, w);
 }
 
 auto Shader::getUniformLocation(const std::string& name) const -> int {
