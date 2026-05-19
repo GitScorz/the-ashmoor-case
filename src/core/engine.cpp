@@ -32,61 +32,75 @@ Cineris::~Cineris() {
   delete m_pPlayer;
 }
 
-auto Cineris::run() -> void {
-  float windowWidth = m_pWindow->m_iWidth;
-  float windowHeight = m_pWindow->m_iHeight;
-
+auto Cineris::init() -> void {
   Mesh *playerMesh = ResourceManager::get().getCubeMesh();
   Shader *playerShader = ResourceManager::get().getShader("lightning");
   Texture *playerTexture = ResourceManager::get().getTexture("black.png");
-  WorldObject* playerObject = new WorldObject(playerMesh, playerShader, playerTexture, glm::vec3(0.0f, 0.0f, 0.0f));
-  playerObject->setObjectColor(glm::vec3(1.0f, 0.5f, 0.31f));
-
-  Debug::registerDebugBindings(m_pInputManager);
+  m_debugPlayerObj = new WorldObject(playerMesh, playerShader, playerTexture, glm::vec3(0.0f, 0.0f, 0.0f));
+  m_debugPlayerObj->setObjectColor(glm::vec3(1.0f, 0.5f, 0.31f));
   
   auto level = LevelLoader::load("ashmoor_entrance");
   m_pWorld->loadLevel(m_pPlayer, level);
+
+  // binds
+  Debug::registerDebugBindings(m_pInputManager);
+
+  m_pInputManager->registerKeyBinding(GLFW_KEY_H, []() {
+    ResourceManager::get().reloadShaders();
+    std::cout << "Shaders reloaded." << std::endl;
+  });
+}
+
+auto Cineris::run() -> void {
+  init();
   
   while (!m_pWindow->shouldClose()) {
     m_dDeltaTime = calculateDeltaTime();
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    processInput();
+    update(m_dDeltaTime);
+    render();
 
-    glm::mat4 view = m_pCamera->getViewMatrix();
-    glm::mat4 projection = glm::perspective(glm::radians(70.0f), windowWidth / windowHeight, 0.1f, 100.0f);
-
-    RenderContext context = { 
-      view, 
-      projection, 
-      m_pCamera->getPosition(),
-      m_pWorld->getLightPositions(),
-      glm::vec3(1.0f, 1.0f, 1.0f),
-    };
-
-    // oceanShader->use();
-    // oceanShader->setMat4("view", view);
-    // oceanShader->setMat4("projection", projection);
-    // oceanShader->setVec3("lightDir", glm::normalize(glm::vec3(-0.5f, -1.0f, -0.3f)));
-    // oceanShader->setFloat("time", (float)glfwGetTime());
-    // oceanShader->setFloat("waveHeight", fWaveHeight);
-    // oceanShader->setFloat("waveFrequency", fWaveFrequency);    
-
-    playerObject->setPosition(m_pPlayer->getPosition());
-    m_pPlayer->update(m_dDeltaTime, m_pWorld);
-    playerObject->draw(context);
-
-    m_pCamera->rotate(
-      m_pInputManager->getMouseDeltaX() * m_pInputManager->m_fMouseSensitivity,
-      m_pInputManager->getMouseDeltaY() * m_pInputManager->m_fMouseSensitivity
-    );
-
-    m_pInputManager->processInput();
-    m_pWorld->draw(context);
     m_pWindow->update();
     m_pWindow->updateFPS();
   }
 
-  delete playerObject;
+  delete m_debugPlayerObj;
   m_pWorld->clearObjects();
+}
+
+auto Cineris::update(double deltaTime) -> void {
+  m_pPlayer->update(deltaTime, m_pWorld);
+
+  m_pCamera->rotate(
+    m_pInputManager->getMouseDeltaX() * m_pInputManager->getMouseSensitivity(),
+    m_pInputManager->getMouseDeltaY() * m_pInputManager->getMouseSensitivity()
+  );
+}
+
+auto Cineris::processInput() -> void {
+  m_pInputManager->processInput();
+}
+
+auto Cineris::render() -> void {
+  float windowWidth = m_pWindow->m_iWidth;
+  float windowHeight = m_pWindow->m_iHeight;
+
+  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glm::mat4 view = m_pCamera->getViewMatrix();
+  glm::mat4 projection = glm::perspective(glm::radians(70.0f), windowWidth / windowHeight, 0.1f, 100.0f);
+
+  RenderContext context = { 
+    view, 
+    projection, 
+    m_pCamera->getPosition(),
+    m_pWorld->getLightPositions(),
+    glm::vec3(1.0f, 1.0f, 1.0f),
+  };
+
+  m_debugPlayerObj->setPosition(m_pPlayer->getPosition());
+  m_pWorld->draw(context);
+  m_debugPlayerObj->draw(context);
 }

@@ -18,10 +18,19 @@ public:
   PlayerController* m_pPlayer = nullptr;
   double m_dLastFrame = 0.0, m_dDeltaTime = 0.0;
 
+  WorldObject* m_debugPlayerObj = nullptr;
+
   Cineris(const std::string& title);
   ~Cineris();
 
   auto run() -> void;
+
+private:
+  auto init() -> void;
+  auto render() -> void;
+  auto update(double deltaTime) -> void;
+  auto processInput() -> void;
+
   auto calculateDeltaTime() -> double {
     double dCurrentFrame = glfwGetTime();
     double dDeltaTime = dCurrentFrame - m_dLastFrame;

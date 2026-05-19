@@ -30,18 +30,21 @@ public:
   auto setVec4(const std::string &name, const glm::vec4 &value) const -> void;
   auto setVec4(const std::string &name, float x, float y, float z, float w) const -> void;
 
+  auto reload() -> void;
+
   auto getId() const -> unsigned int { 
     return m_RendererID; 
   }
 
 private:
   unsigned int m_RendererID = 0;
-  std::string m_VertexSource;
-  std::string m_FragmentSource;
+  std::string m_Name;
   mutable std::unordered_map<std::string, int> m_UniformCache;
 
   static unsigned int s_BoundID;
 
+  auto deleteShaderModules(unsigned int vertModule, unsigned int fragModule) -> void;
+  auto createShaderProgram(unsigned int vertModule, unsigned int fragModule) -> unsigned int;
   auto compile(const std::string &filepath, unsigned int type) -> unsigned int;
   auto getUniformLocation(const std::string& name) const -> int;
 };

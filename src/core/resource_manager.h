@@ -35,6 +35,22 @@ public:
     return m_CubeMesh.get();
   }
 
+  auto reloadShaders() -> void {
+    for (auto& [name, shader] : m_Shaders) {
+      shader->reload();
+    }
+  }
+
+  auto reloadTextures() -> void {
+    // for (auto& [name, texture] : m_Textures) {
+    // }
+  }
+
+  auto reloadAll() -> void {
+    reloadShaders();
+    reloadTextures();
+  }
+
 private:
   ResourceManager() = default;
   std::unordered_map<std::string, std::unique_ptr<Shader>> m_Shaders;

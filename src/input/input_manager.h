@@ -7,7 +7,6 @@ class InputManager {
 public:
   bool m_bFirstMouse = true;
   double m_dLastMouseX = 0.0, m_dLastMouseY = 0.0;
-  float m_fMouseSensitivity = 0.1f;
 
   InputManager(GLFWwindow* window);
   ~InputManager();
@@ -49,8 +48,17 @@ public:
     m_dLastMouseY = ypos;
     return deltaY;
   }
+
+  auto setMouseSensitivity(float sensitivity) -> void {
+    m_fMouseSensitivity = sensitivity;
+  }
+
+  auto getMouseSensitivity() -> float {
+    return m_fMouseSensitivity;
+  }
 private:
   GLFWwindow* m_pWindow;
   static std::unordered_map<int, bool> s_mKeyStates;
   static std::unordered_map<int, std::function<void()>> s_mKeyBindings;
+  float m_fMouseSensitivity = 0.1f;
 };

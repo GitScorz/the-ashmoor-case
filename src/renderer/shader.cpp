@@ -3,7 +3,7 @@
 
 unsigned int Shader::s_BoundID = 0;
 
-Shader::Shader(const std::string &shaderName)
+Shader::Shader(const std::string& shaderName) : m_Name(shaderName)
 {
   std::string vertexFilePath = Paths::Shaders + shaderName + ".vert";
   std::string fragmentFilePath = Paths::Shaders + shaderName + ".frag";
@@ -13,27 +13,43 @@ Shader::Shader(const std::string &shaderName)
     compile(fragmentFilePath, GL_FRAGMENT_SHADER)
   };
 
-  m_RendererID = glCreateProgram();
-  for (unsigned int shaderModule : modules) {
-    glAttachShader(m_RendererID, shaderModule);
-  }
-  glLinkProgram(m_RendererID);
-
-  int success;
-  glGetProgramiv(m_RendererID, GL_LINK_STATUS, &success);
-  if (!success) {
-    char errorLog[512];
-    glGetProgramInfoLog(m_RendererID, 512, NULL, errorLog);
-    std::cout << "Shader linking failed:\n" << errorLog << std::endl;
-  }
-
-  for (unsigned int shaderModule : modules) {
-    glDeleteShader(shaderModule);
-  }
+  m_RendererID = createShaderProgram(modules[0], modules[1]);
 }
 
 Shader::~Shader() {
   glDeleteProgram(m_RendererID);
+}
+
+auto Shader::deleteShaderModules(unsigned int vertModule, unsigned int fragModule) -> void {
+  if (vertModule != 0) glDeleteShader(vertModule);
+  if (fragModule != 0) glDeleteShader(fragModule);
+}
+
+auto Shader::createShaderProgram(unsigned int vertModule, unsigned int fragModule) -> unsigned int {
+  if (vertModule == 0 || fragModule == 0) {
+    deleteShaderModules(vertModule, fragModule);
+    return 0;
+  }
+  
+  unsigned int program = glCreateProgram();
+  glAttachShader(program, vertModule);
+  glAttachShader(program, fragModule);
+  glLinkProgram(program);
+
+  int success;
+  glGetProgramiv(program, GL_LINK_STATUS, &success);
+  if (!success) {
+    char errorLog[512];
+    glGetProgramInfoLog(program, 512, NULL, errorLog);
+    std::cout << "Shader linking failed:\n" << errorLog << std::endl;
+    glDeleteProgram(program);
+    deleteShaderModules(vertModule, fragModule);
+    return 0;
+  }
+
+  deleteShaderModules(vertModule, fragModule);
+
+  return program;
 }
 
 auto Shader::compile(const std::string &filepath, unsigned int type) -> unsigned int {
@@ -59,6 +75,8 @@ auto Shader::compile(const std::string &filepath, unsigned int type) -> unsigned
     char errorLog[512];
     glGetShaderInfoLog(shaderModule, 512, NULL, errorLog);
     std::cout << "Shader module compilation failed (" << filepath << "):\n" << errorLog << std::endl;
+    glDeleteShader(shaderModule);
+    return 0;
   }
 
   return shaderModule;
@@ -155,4 +173,26 @@ auto Shader::getUniformLocation(const std::string& name) const -> int {
   int loc = glGetUniformLocation(m_RendererID, name.c_str());
   m_UniformCache[name] = loc;
   return loc;
+}
+
+auto Shader::reload() -> void {
+  std::string vertexFilePath = Paths::Shaders + m_Name + ".vert";
+  std::string fragmentFilePath = Paths::Shaders + m_Name + ".frag";
+
+  std::vector<unsigned int> modules = {
+    compile(vertexFilePath, GL_VERTEX_SHADER),
+    compile(fragmentFilePath, GL_FRAGMENT_SHADER)
+  };
+
+  int newProgram = createShaderProgram(modules[0], modules[1]);
+  if (newProgram == 0) return;
+
+  if (s_BoundID == m_RendererID) {
+    s_BoundID = 0;
+  }
+
+  glDeleteProgram(m_RendererID);
+
+  m_RendererID = newProgram;
+  m_UniformCache.clear();
 }
