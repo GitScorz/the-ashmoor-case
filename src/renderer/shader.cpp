@@ -125,6 +125,13 @@ auto Shader::setInt(const std::string &name, int value) const -> void
   glUniform1i(location, value);
 }
 
+auto Shader::setBool(const std::string &name, bool value) const -> void
+{
+  use();
+  int location = Shader::getUniformLocation(name);
+  glUniform1i(location, static_cast<int>(value));
+}
+
 auto Shader::setVec2(const std::string &name, const glm::vec2 &value) const -> void
 {
   use();

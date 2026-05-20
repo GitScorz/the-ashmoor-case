@@ -20,6 +20,7 @@ public:
   
   auto setFloat(const std::string &name, float value) const -> void;
   auto setInt(const std::string &name, int value) const -> void;
+  auto setBool(const std::string &name, bool value) const -> void;
 
   auto setVec2(const std::string &name, const glm::vec2 &value) const -> void;
   auto setVec2(const std::string &name, float x, float y) const -> void;
