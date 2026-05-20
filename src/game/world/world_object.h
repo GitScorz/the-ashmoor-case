@@ -38,6 +38,13 @@ public:
     m_pShader->setVec3("viewPos", context.viewPos);
     m_pShader->setVec3("lightColor", context.lightColor);
     m_pShader->setVec3("objectColor", m_ObjectColor);
+    m_pShader->setBool("isLightSource", m_bIsLightSource);
+
+    m_pShader->setInt("uFogEnabled", context.fog.bEnabled ? 1 : 0);
+    m_pShader->setVec3("uFogColor", context.fog.v_Color);
+    m_pShader->setFloat("uFogDensity", context.fog.fDensity);
+    m_pShader->setFloat("uFogStart", context.fog.fStart);
+    m_pShader->setFloat("uFogEnd", context.fog.fEnd);
 
     int lightCount = static_cast<int>(context.lightPositions.size());
     if (lightCount > RenderContext::MAX_LIGHTS) {

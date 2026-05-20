@@ -39,11 +39,14 @@ public:
     for (auto& [name, shader] : m_Shaders) {
       shader->reload();
     }
+
+    std::cout << "Shaders reloaded successfully!" << std::endl;
   }
 
   auto reloadTextures() -> void {
     // for (auto& [name, texture] : m_Textures) {
     // }
+    std::cout << "Textures reloaded successfully!" << std::endl;
   }
 
   auto reloadAll() -> void {

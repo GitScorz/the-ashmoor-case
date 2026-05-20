@@ -47,7 +47,6 @@ auto Cineris::init() -> void {
 
   m_pInputManager->registerKeyBinding(GLFW_KEY_H, []() {
     ResourceManager::get().reloadShaders();
-    std::cout << "Shaders reloaded." << std::endl;
   });
 }
 
@@ -98,6 +97,13 @@ auto Cineris::render() -> void {
     m_pCamera->getPosition(),
     m_pWorld->getLightPositions(),
     glm::vec3(1.0f, 1.0f, 1.0f),
+    FogSettings{
+      true,
+      glm::vec3(0.18f, 0.20f, 0.19f),
+      0.08f,
+      0.0f,
+      25.0f
+    }
   };
 
   m_debugPlayerObj->setPosition(m_pPlayer->getPosition());

@@ -4,12 +4,20 @@ out vec4 fragmentColor;
 in vec3 Normal;  
 in vec3 FragPos;
 in vec2 TexCoords;
+in vec3 FragWorldPos;
 
 uniform vec3 viewPos; 
 uniform vec3 lightColor;
 uniform vec3 objectColor;
 uniform int lightCount;
 uniform vec3 lightPositions[8];
+
+// fog
+uniform int uFogEnabled;
+uniform vec3 uFogColor;
+uniform float uFogDensity;
+uniform float uFogStart;
+uniform float uFogEnd;
 
 uniform sampler2D uTexture;
 
@@ -35,6 +43,20 @@ void main() {
     specularSum += specularStrength * spec * lightColor;
   }
 
+  float distanceToCamera = length(viewPos - FragWorldPos);
+  float fogAmount = 1.0 - exp(-distanceToCamera * uFogDensity);
+  fogAmount = clamp(fogAmount, 0.0, 1.0);
+
   vec3 result = (ambient + diffuseSum + specularSum) * objectColor;
-  fragmentColor = texture(uTexture, TexCoords) * vec4(result, 1.0);
+  vec4 baseColor = texture(uTexture, TexCoords) * vec4(result, 1.0);
+
+  if (uFogEnabled == 1) {
+    float distanceToCamera = length(viewPos - FragWorldPos);
+    float fogAmount = 1.0 - exp(-distanceToCamera * uFogDensity);
+    fogAmount = clamp(fogAmount, 0.0, 1.0);
+
+    baseColor.rgb = mix(baseColor.rgb, uFogColor, fogAmount);
+  }
+
+  fragmentColor = baseColor;
 } 
