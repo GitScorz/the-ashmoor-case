@@ -1,6 +1,8 @@
 #include "shader.h"
 #include "paths.h"
 
+namespace fs = std::filesystem;
+
 unsigned int Shader::s_BoundID = 0;
 
 Shader::Shader(const std::string& shaderName) : m_Name(shaderName)
@@ -52,21 +54,59 @@ auto Shader::createShaderProgram(unsigned int vertModule, unsigned int fragModul
   return program;
 }
 
-auto Shader::compile(const std::string &filepath, unsigned int type) -> unsigned int {
-  std::ifstream file(filepath);
+auto Shader::loadShaderFile(const std::string &filepath, std::unordered_set<std::string>& includeStack) -> std::string {
+  fs::path fullPath = fs::absolute(filepath).lexically_normal();
+  std::string fullPathStr = fullPath.string();
 
-  if (!file.is_open()) {
-    std::cerr << "Failed to open shader file: " << filepath << std::endl;
-    return 0;
+  if (includeStack.contains(fullPathStr))
+    throw std::runtime_error("Recursive '#include' detected: " + fullPathStr);
+
+  includeStack.insert(fullPathStr);
+
+  std::ifstream file(filepath);
+  if (!file.is_open())
+    throw std::runtime_error("Failed to open shader file: " + fullPathStr);
+
+  std::stringstream output;
+  std::string line;
+  fs::path currentDir = fullPath.parent_path();
+
+  while (std::getline(file, line)) {
+    std::string directive = "#include";
+    size_t includePos = line.find(directive);
+
+    if (includePos != std::string::npos) {
+      size_t firstQuote = line.find('"', includePos);
+      size_t secondQuote = line.find('"', firstQuote + 1);
+
+      if (firstQuote == std::string::npos || secondQuote == std::string::npos)
+        throw std::runtime_error("Malformed #include in: " + fullPathStr);
+
+      std::string includeFile = line.substr(firstQuote + 1, secondQuote - firstQuote - 1);
+      fs::path includePath = currentDir / includeFile;
+
+      // comments just for debugging
+      output << "\n// BEGIN include: " << includeFile << "\n";
+      output << loadShaderFile(includePath, includeStack);
+      output << "\n// END include: " << includeFile << "\n";
+
+    } else {
+      output << line << "\n";
+    }
   }
 
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string shaderSource = buffer.str();
-  const char* shaderSrc = shaderSource.c_str();
+  includeStack.erase(fullPathStr);
+
+  return output.str();
+}
+
+auto Shader::compile(const std::string &filepath, unsigned int type) -> unsigned int {
+  std::unordered_set<std::string> includeStack;
+  std::string shaderSource = loadShaderFile(filepath, includeStack);
+  const char* srcPointer = shaderSource.c_str();
 
   unsigned int shaderModule = glCreateShader(type);
-  glShaderSource(shaderModule, 1, &shaderSrc, nullptr);
+  glShaderSource(shaderModule, 1, &srcPointer, nullptr);
   glCompileShader(shaderModule);
 
   int success;

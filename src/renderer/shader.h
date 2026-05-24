@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 class Shader {
 public:
@@ -46,6 +47,7 @@ private:
 
   auto deleteShaderModules(unsigned int vertModule, unsigned int fragModule) -> void;
   auto createShaderProgram(unsigned int vertModule, unsigned int fragModule) -> unsigned int;
+  static auto loadShaderFile(const std::string &filepath, std::unordered_set<std::string>& includeStack) -> std::string;
   auto compile(const std::string &filepath, unsigned int type) -> unsigned int;
   auto getUniformLocation(const std::string& name) const -> int;
 };
