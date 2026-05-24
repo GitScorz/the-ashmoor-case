@@ -20,21 +20,33 @@ target_link_directories(cineris PRIVATE
   ${CMAKE_SOURCE_DIR}/dependencies/lib
 )
 
-target_link_libraries(cineris PRIVATE glfw3)
+target_link_libraries(cineris PRIVATE 
+  glfw3
+  freetype
+)
 
 target_compile_definitions(cineris PRIVATE
   CNR_BASE_PATH="${CMAKE_SOURCE_DIR}/"
 )
 
 file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
 
 if(WIN32)
   target_link_libraries(cineris PRIVATE opengl32)
+
+  add_custom_command(TARGET cineris POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/dependencies/lib/freetype.dll"
+            "$<TARGET_FILE_DIR:cineris>"
+    COMMENT "Copying FreeType DLL to output folder."
+  )
 elseif(APPLE)
   find_library(COCOA_LIB Cocoa)
   find_library(IOKIT_LIB IOKit)
   find_library(COREVIDEO_LIB CoreVideo)
   find_library(OPENGL_LIB OpenGL)
+
   target_link_libraries(cineris PRIVATE 
     ${COCOA_LIB} 
     ${IOKIT_LIB} 

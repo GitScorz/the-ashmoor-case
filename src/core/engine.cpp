@@ -2,11 +2,12 @@
 #include "debug.h"
 #include "resource_manager.h"
 #include "game/world/level_loader.h"
+#include "paths.h"
 
 Cineris::Cineris(const std::string& title) {
   Debug::setupDebugConsole();
 
-  m_pWindow = new Window(1920, 1080, title.c_str());
+  m_pWindow = new Window(1440, 720, title.c_str());
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
@@ -22,6 +23,11 @@ Cineris::Cineris(const std::string& title) {
   m_pInputManager = new InputManager(m_pWindow->m_Handle);
   m_pWorld = new World();
   m_pPlayer = new PlayerController(m_pCamera, m_pInputManager);
+  m_pTextRenderer = new TextRenderer(m_pWindow);
+
+  unsigned int baseFontSize = 48;
+  m_pTextRenderer->loadFont(Paths::Fonts + "palr45w.ttf", baseFontSize);
+
 }
 
 Cineris::~Cineris() {
@@ -30,6 +36,7 @@ Cineris::~Cineris() {
   delete m_pInputManager;
   delete m_pWorld;
   delete m_pPlayer;
+  delete m_pTextRenderer;
 }
 
 auto Cineris::init() -> void {
@@ -109,4 +116,9 @@ auto Cineris::render() -> void {
   m_debugPlayerObj->setPosition(m_pPlayer->getPosition());
   m_pWorld->draw(context);
   m_debugPlayerObj->draw(context);
+
+
+  glDisable(GL_DEPTH_TEST);
+  m_pTextRenderer->renderText("this is a test", 25.f, 50.f, 0.5f, glm::vec3(1.f));
+  glEnable(GL_DEPTH_TEST);
 }

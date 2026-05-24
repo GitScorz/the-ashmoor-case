@@ -1,5 +1,6 @@
 #include "shader.h"
 #include "paths.h"
+#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -87,7 +88,7 @@ auto Shader::loadShaderFile(const std::string &filepath, std::unordered_set<std:
 
       // comments just for debugging
       output << "\n// BEGIN include: " << includeFile << "\n";
-      output << loadShaderFile(includePath, includeStack);
+      output << loadShaderFile(includePath.string(), includeStack);
       output << "\n// END include: " << includeFile << "\n";
 
     } else {

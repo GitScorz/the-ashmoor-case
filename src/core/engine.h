@@ -7,6 +7,7 @@
 #include "input/input_manager.h"
 #include "game/world/world.h"
 #include "game/controllers/player_controller.h"
+#include "renderer/text_renderer.h"
 
 class Cineris
 {
@@ -16,6 +17,7 @@ public:
   InputManager* m_pInputManager = nullptr;
   World* m_pWorld = nullptr;
   PlayerController* m_pPlayer = nullptr;
+  TextRenderer* m_pTextRenderer = nullptr;
   double m_dLastFrame = 0.0, m_dDeltaTime = 0.0;
 
   WorldObject* m_debugPlayerObj = nullptr;

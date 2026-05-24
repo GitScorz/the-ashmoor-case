@@ -6,4 +6,5 @@ namespace Paths {
   inline const std::string Textures = Base + "resources/textures/";
   inline const std::string Levels = Base + "resources/levels/";
   inline const std::string Shaders = Base + "shaders/";
+  inline const std::string Fonts = Base + "resources/assets/fonts/";
 }

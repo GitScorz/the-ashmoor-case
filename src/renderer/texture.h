@@ -10,6 +10,8 @@ public:
   auto bind(unsigned int slot = 0) const -> void;
   auto unbind() const -> void;
 
+  auto getId() const -> unsigned int { return m_RendererID; }
+
 private:
   unsigned int m_RendererID = 0;
 };
