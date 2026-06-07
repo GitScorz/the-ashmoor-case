@@ -73,7 +73,7 @@ file(GLOB_RECURSE CINERIS_GAME_SOURCES CONFIGURE_DEPENDS
 
 add_executable(cineris_game
   ${CINERIS_GAME_SOURCES}
- "game/src/ashmoor_case.cpp")
+)
 
 target_link_libraries(cineris_game
   PRIVATE

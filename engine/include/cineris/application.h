@@ -15,8 +15,11 @@ namespace cineris {
     public:
         double m_dLastFrame = 0.0, m_dDeltaTime = 0.0;
 
-        Application(const std::string& title);
-        ~Application();
+        explicit Application(const std::string& title);
+        virtual ~Application();
+
+        Application(const Application&) = delete;
+        Application& operator=(const Application&) = delete;
 
         auto run() -> void;
 

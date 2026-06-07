@@ -12,10 +12,10 @@ namespace ashmoor {
 		~AshmoorCase();
 
 	protected:
-		auto onInit() -> void;
-		auto onUpdate(double deltaTime) -> void;
-		auto onRender() -> void;
-		auto onShutdown() -> void;
+		auto onInit() -> void override;
+		auto onUpdate(double deltaTime) -> void override;
+		auto onRender() -> void override;
+		auto onShutdown() -> void override;
 	private:
 		std::unique_ptr<World> m_pWorld;
 		std::unique_ptr<PlayerController> m_pPlayerController;
