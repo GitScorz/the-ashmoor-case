@@ -1,5 +1,6 @@
 #pragma once
 #include <cineris/application.h>
+#include <cineris/renderer/skybox.h>
 #include "world/world.h"
 #include "controllers/player_controller.h"
 
@@ -20,6 +21,8 @@ namespace ashmoor {
 		std::unique_ptr<World> m_pWorld;
 		std::unique_ptr<PlayerController> m_pPlayerController;
 		std::unique_ptr<WorldObject> m_pDebugPlayerObj;
+		
+		renderer::Skybox m_Skybox;
 
 		std::string m_debugMessage;
 		double m_debugMessageTimer = 0.0;

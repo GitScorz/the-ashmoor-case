@@ -36,7 +36,8 @@ namespace ashmoor {
 
         auto isLightSource() const -> bool { return m_bIsLightSource; }
 
-        auto getAABB() -> AABB;
+        auto getModelMatrix() const -> glm::mat4;
+        auto getAABB() const -> AABB;
 
         auto getId() const -> int { return m_ObjectId; }
         auto isCollidable() const -> bool { return m_bIsCollidable; }

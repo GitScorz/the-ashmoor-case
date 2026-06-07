@@ -21,6 +21,16 @@ uniform float uFogEnd;
 
 uniform sampler2D uTexture;
 
+struct Material {
+    // vec3 ambient;
+    vec3 diffuse;
+    // vec3 specular;
+    float shininess;
+}; 
+  
+uniform Material material;
+uniform samplerCube skybox;
+
 void main() {
   float ambientStrength = 0.15;
   vec3 ambient = ambientStrength * lightColor;
@@ -29,18 +39,18 @@ void main() {
   vec3 specularSum = vec3(0.0);
 
   vec3 norm = normalize(Normal);
-  vec3 viewDir = normalize(viewPos - FragPos);
+  vec3 lightDir = normalize(viewPos - FragPos);
 
   for (int i = 0; i < lightCount; ++i) {
     vec3 lightDir = normalize(lightPositions[i] - FragPos);
 
     float diff = max(dot(norm, lightDir), 0.0);
-    diffuseSum += diff * lightColor;
+    diffuseSum += lightColor * (diff * material.diffuse);
 
     float specularStrength = 0.5;
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    specularSum += specularStrength * spec * lightColor;
+    float spec = pow(max(dot(lightDir, reflectDir), 0.0), material.shininess);
+    specularSum += specularStrength * (spec * lightColor);
   }
 
   float distanceToCamera = length(viewPos - FragWorldPos);

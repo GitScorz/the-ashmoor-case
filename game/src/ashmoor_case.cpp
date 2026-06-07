@@ -4,6 +4,7 @@
 #include "paths.h"
 #include "debug.h"
 #include <memory>
+#include <array>
 
 // TODO: Logging system
 
@@ -28,6 +29,19 @@ namespace ashmoor {
 
 		auto* shader = resources().getShader(Paths::Shaders + "text");
 		textRenderer().loadFont(Paths::Fonts + "palr45w.ttf", 48, shader);
+
+		auto* skyboxShader = resources().getShader(Paths::Shaders + "skybox");
+
+		std::array<std::string, 6> faces = {
+			Paths::Textures + "skybox_faces/right.png",
+			Paths::Textures + "skybox_faces/left.png",
+			Paths::Textures + "skybox_faces/top.png",
+			Paths::Textures + "skybox_faces/bottom.png",
+			Paths::Textures + "skybox_faces/front.png",
+			Paths::Textures + "skybox_faces/back.png"
+		};
+
+		m_Skybox.load(faces, skyboxShader);
 
 		renderer::Mesh* playerMesh = resources().getCubeMesh();
 		renderer::Material playerMaterial;
@@ -76,7 +90,7 @@ namespace ashmoor {
 		float windowWidth = window().m_iWidth;
 		float windowHeight = window().m_iHeight;
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 view = camera().getViewMatrix();
@@ -101,9 +115,9 @@ namespace ashmoor {
 		m_pWorld->draw(context);
 		m_pDebugPlayerObj->draw(context);
 
+		m_Skybox.draw(view, projection);
 
 		// text rendering
-
 		glDisable(GL_DEPTH_TEST);
 		if (m_debugMessageTimer > 0.0 && !m_debugMessage.empty()) {
 			textRenderer().renderText(m_debugMessage, 25.f, 50.f, 0.5f, glm::vec4(0.6f, 1.f, 0.6f, m_debugMessageTimer));

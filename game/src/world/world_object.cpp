@@ -6,25 +6,18 @@ namespace ashmoor {
         m_material.bind();
 
         auto* shader = m_material.shader;
-        if (!shader) {
+        if (!shader || !m_pMesh) {
             return;
         }
 
-        // model matrix
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, m_Position);
-        model = glm::rotate(model, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Rotation.y), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, m_Scale);
-
-        shader->setMat4("model", model);
+        shader->setMat4("model", getModelMatrix());
         shader->setMat4("view", context.view);
         shader->setMat4("projection", context.projection);
         shader->setVec3("viewPos", context.viewPos);
         shader->setVec3("lightColor", context.lightColor);
-        //shader->setVec3("objectColor", m_ObjectColor);
-        shader->setBool("isLightSource", m_bIsLightSource);
+        shader->setBool("isLightSource", isLightSource());
+
+        shader->setInt("skybox", 0);
 
         shader->setInt("uFogEnabled", context.fog.bEnabled ? 1 : 0);
         shader->setVec3("uFogColor", context.fog.v_Color);
@@ -45,7 +38,17 @@ namespace ashmoor {
         m_pMesh->draw();
     }
 
-    auto WorldObject::getAABB() -> AABB {
+    auto WorldObject::getModelMatrix() const -> glm::mat4 {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, m_Position);
+        model = glm::rotate(model, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, m_Scale);
+        return model;
+    }
+
+    auto WorldObject::getAABB() const -> AABB {
         // TODO: calculate the AABB based on the actual vertices of the mesh lol
         glm::vec3 outMin = m_Position - m_Scale;
         glm::vec3 outMax = m_Position + m_Scale;
