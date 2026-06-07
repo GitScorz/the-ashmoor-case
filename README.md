@@ -22,7 +22,7 @@ If the description above doesn’t fully capture the mood, here are some visual 
 
 > Visual inspiration only — these are not in-game screenshots or final previews.
 
-| Reference 1 | Reference 2 | Reference 3 |
+| Ambient 1 | Ambient 2 | Main Character |
 |---|---|---|
 | ![ASHMOOR REFERENCE 1](resources/references/image.png) | ![ASHMOOR REFERENCE 2](resources/references/image2.png) | ![ASHMOOR REFERENCE 3](resources/references/image3.png) |
 
