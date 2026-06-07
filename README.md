@@ -26,7 +26,7 @@ If the description above doesn’t fully capture the mood, here are some visual 
 |---|---|---|
 | ![ASHMOOR REFERENCE 1](resources/references/image.png) | ![ASHMOOR REFERENCE 2](resources/references/image2.png) | ![ASHMOOR REFERENCE 3](resources/references/image3.png) |
 
-> Generated with ChatGPT and used only as visual inspiration.
+> Generated with ChatGPT Pro 5.5 and used only as visual inspiration.
 
 ## Resources
 
@@ -34,3 +34,11 @@ I plan to create some of the textures, models etc... but some of them are from:
 - https://ambientcg.com/
 
 I also plan to create some music for this project.
+
+## License
+
+This project is available for personal and educational use under the Cineris Non-Commercial License.
+
+You may study, modify, and share the project for non-commercial purposes.
+
+You may not sell this project, sell modified versions, include it in paid products, or otherwise use it commercially without explicit permission from the author.
