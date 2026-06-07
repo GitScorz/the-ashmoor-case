@@ -48,3 +48,10 @@ build
 
 # VS Code settings
 .vscode
+
+# CLion
+cmake-build-debug
+
+# Visual Studi
+.vs
+.idea
