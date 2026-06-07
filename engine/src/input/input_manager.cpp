@@ -15,4 +15,23 @@ namespace cineris::input {
 
     InputManager::~InputManager() {}
 
+    auto InputManager::processInput() -> void {
+        for (auto& [key, func] : s_mKeyBindings) {
+            if (glfwGetKey(m_pWindow, key) == GLFW_PRESS) {
+                if (!s_mKeyStates[key]) {
+                    func();
+                    s_mKeyStates[key] = true;
+                }
+            }
+            else {
+                s_mKeyStates[key] = false;
+            }
+        }
+    }
+
+    auto InputManager::registerKeyBinding(int key, std::function<void()> func) -> void {
+        s_mKeyBindings[key] = func;
+        s_mKeyStates[key] = false; // Initialize key state
+    }
+
 }

@@ -22,7 +22,8 @@ namespace cineris::renderer {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_nRBO); // now actually attach it
         // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cerr << "Framebuffer failed to complete!" << std::endl;
+            unbind();
+            throw std::runtime_error("Framebuffer failed to complete!");
         }
         unbind();
     }

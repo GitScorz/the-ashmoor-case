@@ -22,7 +22,10 @@ namespace cineris::renderer {
 		~TextRenderer();
 
 		auto loadFont(const std::string& filepath, unsigned int pixelSize, Shader* shader) -> void;
-		auto renderText(const std::string& text, float x, float y, float scale, glm::vec3 color) -> void;
+		auto renderText(const std::string& text, float x, float y, float scale, glm::vec4 color) -> void;
+
+		auto updateProjection() -> void;
+		auto setShader(Shader* shader) -> void;
 	private:
 		Window* m_pWindow = nullptr;
 		Shader* m_pShader = nullptr;

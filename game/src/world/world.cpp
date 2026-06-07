@@ -35,9 +35,10 @@ namespace ashmoor {
                 }
                 else if (tile == 'L') {
                     // light source
+                    cineris::renderer::Material lightMaterial;
+                    lightMaterial.shader = cineris::ResourceManager::get().getShader(Paths::Shaders + "cube");
                     cineris::renderer::Mesh* lightMesh = cineris::renderer::Mesh::createCube();
-                    cineris::renderer::Shader* lightShader = cineris::ResourceManager::get().getShader(Paths::Shaders + "cube");
-                    WorldObject* lightObject = new WorldObject(lightMesh, lightShader, nullptr, glm::vec3(col, row, 0.0f));
+                    WorldObject* lightObject = new WorldObject(lightMesh, lightMaterial, glm::vec3(col, row, 0.0f));
                     lightObject->setScale(glm::vec3(0.2f));
                     lightObject->setIsLightSource(true);
                     addObject(lightObject);
@@ -54,12 +55,13 @@ namespace ashmoor {
         std::cout << "floor area size: " << floorAreaSize << std::endl;
 
         renderer::Mesh* floorMesh = renderer::Mesh::createGrid(20.f, 20.f, 100, 100);
-        // Mesh* floorMesh = Mesh::createQuad(floorAreaSize, floorAreaSize);
-        renderer::Shader* floorShader = cineris::ResourceManager::get().getShader(Paths::Shaders + "lightning");
-        renderer::Texture* floorTexture = cineris::ResourceManager::get().getTexture(Paths::Textures + "Rocks024L_1K/Rocks024L_1K-PNG_Color.png");
-        WorldObject* floorObject = new WorldObject(floorMesh, floorShader, floorTexture, glm::vec3(floorAreaSize / 2.0f - 0.5f, levelData.size() / 2.0f - 0.5f, -0.5f));
+        renderer::Material floorMaterial;
+        floorMaterial.shader = cineris::ResourceManager::get().getShader(Paths::Shaders + "lightning");
+        floorMaterial.albedo = cineris::ResourceManager::get().getTexture(Paths::Textures + "Rocks024L_1K/Rocks024L_1K-PNG_Color.png");
+        floorMaterial.color = glm::vec3(0.25f, 0.35f, 0.25f);
+
+        WorldObject* floorObject = new WorldObject(floorMesh, floorMaterial, glm::vec3(floorAreaSize / 2.0f - 0.5f, levelData.size() / 2.0f - 0.5f, -0.5f));
         floorObject->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
-        floorObject->setObjectColor(glm::vec3(0.25f, 0.35f, 0.25f));
         addObject(floorObject);
     }
 

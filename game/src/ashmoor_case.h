@@ -20,5 +20,10 @@ namespace ashmoor {
 		std::unique_ptr<World> m_pWorld;
 		std::unique_ptr<PlayerController> m_pPlayerController;
 		std::unique_ptr<WorldObject> m_pDebugPlayerObj;
+
+		std::string m_debugMessage;
+		double m_debugMessageTimer = 0.0;
+	private:
+		auto showDebugMessage(const std::string& message, double duration) -> void;
 	};
 }

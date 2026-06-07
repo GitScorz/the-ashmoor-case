@@ -17,43 +17,14 @@ namespace cineris {
 
         ~ResourceManager() = default;
 
-        renderer::Shader* getShader(const std::string& name) {
-            auto it = m_Shaders.find(name);
-            if (it != m_Shaders.end()) return it->second.get();
-            m_Shaders[name] = std::make_unique<renderer::Shader>(name);
-            return m_Shaders[name].get();
-        }
+        auto getShader(const std::string& name) -> renderer::Shader*;
+        auto getTexture(const std::string& name) -> renderer::Texture*;
+        auto getCubeMesh() -> renderer::Mesh*;
 
-        renderer::Texture* getTexture(const std::string& name) {
-            auto it = m_Textures.find(name);
-            if (it != m_Textures.end()) return it->second.get();
-            m_Textures[name] = std::make_unique<renderer::Texture>(name);
-            return m_Textures[name].get();
-        }
+        auto reloadShaders() -> void;
+        auto reloadTextures() -> void;
 
-        renderer::Mesh* getCubeMesh() {
-            if (!m_CubeMesh) m_CubeMesh = std::unique_ptr<renderer::Mesh>(renderer::Mesh::createCube());
-            return m_CubeMesh.get();
-        }
-
-        auto reloadShaders() -> void {
-            for (auto& [name, shader] : m_Shaders) {
-                shader->reload();
-            }
-
-            std::cout << "Shaders reloaded successfully!" << std::endl;
-        }
-
-        auto reloadTextures() -> void {
-            // for (auto& [name, texture] : m_Textures) {
-            // }
-            std::cout << "Textures reloaded successfully!" << std::endl;
-        }
-
-        auto reloadAll() -> void {
-            reloadShaders();
-            reloadTextures();
-        }
+        auto reloadAll() -> void;
 
     private:
         ResourceManager() = default;

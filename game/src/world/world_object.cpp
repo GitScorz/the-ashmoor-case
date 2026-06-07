@@ -3,7 +3,12 @@
 namespace ashmoor {
 
     auto WorldObject::draw(const RenderContext& context) -> void {
-        m_pShader->use();
+        m_material.bind();
+
+        auto* shader = m_material.shader;
+        if (!shader) {
+            return;
+        }
 
         // model matrix
         glm::mat4 model = glm::mat4(1.0f);
@@ -13,33 +18,28 @@ namespace ashmoor {
         model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, m_Scale);
 
-        m_pShader->setMat4("model", model);
-        m_pShader->setMat4("view", context.view);
-        m_pShader->setMat4("projection", context.projection);
-        m_pShader->setVec3("viewPos", context.viewPos);
-        m_pShader->setVec3("lightColor", context.lightColor);
-        m_pShader->setVec3("objectColor", m_ObjectColor);
-        m_pShader->setBool("isLightSource", m_bIsLightSource);
+        shader->setMat4("model", model);
+        shader->setMat4("view", context.view);
+        shader->setMat4("projection", context.projection);
+        shader->setVec3("viewPos", context.viewPos);
+        shader->setVec3("lightColor", context.lightColor);
+        //shader->setVec3("objectColor", m_ObjectColor);
+        shader->setBool("isLightSource", m_bIsLightSource);
 
-        m_pShader->setInt("uFogEnabled", context.fog.bEnabled ? 1 : 0);
-        m_pShader->setVec3("uFogColor", context.fog.v_Color);
-        m_pShader->setFloat("uFogDensity", context.fog.fDensity);
-        m_pShader->setFloat("uFogStart", context.fog.fStart);
-        m_pShader->setFloat("uFogEnd", context.fog.fEnd);
+        shader->setInt("uFogEnabled", context.fog.bEnabled ? 1 : 0);
+        shader->setVec3("uFogColor", context.fog.v_Color);
+        shader->setFloat("uFogDensity", context.fog.fDensity);
+        shader->setFloat("uFogStart", context.fog.fStart);
+        shader->setFloat("uFogEnd", context.fog.fEnd);
 
         int lightCount = static_cast<int>(context.lightPositions.size());
         if (lightCount > RenderContext::MAX_LIGHTS) {
             lightCount = RenderContext::MAX_LIGHTS;
         }
-        m_pShader->setInt("lightCount", lightCount);
+        shader->setInt("lightCount", lightCount);
 
         for (int i = 0; i < lightCount; ++i) {
-            m_pShader->setVec3("lightPositions[" + std::to_string(i) + "]", context.lightPositions[i]);
-        }
-
-        if (m_pTexture) {
-            m_pTexture->bind(0);
-            m_pShader->setInt("uTexture", 0);
+            shader->setVec3("lightPositions[" + std::to_string(i) + "]", context.lightPositions[i]);
         }
 
         m_pMesh->draw();

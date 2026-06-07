@@ -5,9 +5,6 @@ namespace cineris::renderer {
 
     TextRenderer::TextRenderer(Window* window) : m_pWindow(window)
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         if (FT_Init_FreeType(&m_FreeType)) {
             std::cout << "Coulnd't initialize FreeType" << std::endl;
             return;
@@ -99,21 +96,43 @@ namespace cineris::renderer {
             throw std::runtime_error("TextRenderer received null shader");
         }
 
+        updateProjection();
+    }
+
+    auto TextRenderer::updateProjection() -> void {
+        if (!m_pShader || !m_pWindow) {
+            return;
+        }
+
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(m_pWindow->m_iWidth), 0.0f, static_cast<float>(m_pWindow->m_iHeight));
         m_pShader->use();
         m_pShader->setMat4("projection", projection);
     }
 
-    auto TextRenderer::renderText(const std::string& text, float x, float y, float scale, glm::vec3 color) -> void {
+    auto TextRenderer::renderText(const std::string& text, float x, float y, float scale, glm::vec4 color) -> void {
+        if (!m_pShader || text.empty()) {
+            return;
+        }
+
+        // todo: update on window resize
+        updateProjection();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         m_pShader->use();
         m_pShader->setInt("text", 0);
-        m_pShader->setVec3("textColor", color);
+        m_pShader->setVec4("textColor", color);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(m_VAO);
 
         std::string::const_iterator c;
         for (c = text.begin(); c != text.end(); c++) {
-            Character ch = m_Characters[*c];
+            auto it = m_Characters.find(*c);
+            if (it == m_Characters.end())
+                continue;
+
+            const Character& ch = it->second;
 
             float xpos = x + ch.bearing.x * scale;
             float ypos = y - (ch.size.y - ch.bearing.y) * scale;
@@ -142,6 +161,16 @@ namespace cineris::renderer {
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        glDisable(GL_BLEND);
     }
 
+    auto TextRenderer::setShader(Shader* shader) -> void {
+        m_pShader = shader;
+
+        if (!m_pShader)
+            throw std::runtime_error("TextRenderer received null shader on reassigning shader");
+
+        updateProjection();
+    }
 }

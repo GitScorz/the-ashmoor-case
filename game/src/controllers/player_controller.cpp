@@ -28,17 +28,17 @@ namespace ashmoor {
 
         glm::vec3 vMovement(0.0f);
 
-        if (m_Input.IsControlPressed(GLFW_KEY_W))
+        if (m_Input.isControlPressed(GLFW_KEY_W))
             vMovement += vFront * m_fSpeed * fDeltaTime;
-        if (m_Input.IsControlPressed(GLFW_KEY_S))
+        if (m_Input.isControlPressed(GLFW_KEY_S))
             vMovement -= vFront * m_fSpeed * fDeltaTime;
-        if (m_Input.IsControlPressed(GLFW_KEY_A))
+        if (m_Input.isControlPressed(GLFW_KEY_A))
             vMovement -= vRight * m_fSpeed * fDeltaTime;
-        if (m_Input.IsControlPressed(GLFW_KEY_D))
+        if (m_Input.isControlPressed(GLFW_KEY_D))
             vMovement += vRight * m_fSpeed * fDeltaTime;
-        if (m_Input.IsControlPressed(GLFW_KEY_E))
+        if (m_Input.isControlPressed(GLFW_KEY_E))
             vMovement += glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
-        if (m_Input.IsControlPressed(GLFW_KEY_Q))
+        if (m_Input.isControlPressed(GLFW_KEY_Q))
             vMovement -= glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
 
         if (glm::length(vMovement) > 0.0f)

@@ -30,11 +30,12 @@ namespace ashmoor {
 		textRenderer().loadFont(Paths::Fonts + "palr45w.ttf", 48, shader);
 
 		renderer::Mesh* playerMesh = resources().getCubeMesh();
-		renderer::Shader* playerShader = resources().getShader(Paths::Shaders + "lightning");
-		renderer::Texture* playerTexture = resources().getTexture(Paths::Textures + "black.png");
+		renderer::Material playerMaterial;
+		playerMaterial.shader = resources().getShader(Paths::Shaders + "lightning");
+		playerMaterial.albedo = resources().getTexture(Paths::Textures + "black.png");
+		playerMaterial.color = glm::vec3(1.0f, 0.5f, 0.31f);
 
-		m_pDebugPlayerObj = std::make_unique<WorldObject>(playerMesh, playerShader, playerTexture, glm::vec3(0.0f, 0.0f, 0.0f));
-		m_pDebugPlayerObj->setObjectColor(glm::vec3(1.0f, 0.5f, 0.31f));
+		m_pDebugPlayerObj = std::make_unique<WorldObject>(playerMesh, playerMaterial, glm::vec3(0.0f));
 
 		auto level = LevelLoader::load("ashmoor_entrance");
 		m_pWorld->loadLevel(m_pPlayerController.get(), level);
@@ -42,8 +43,13 @@ namespace ashmoor {
 		// binds
 		debug::registerDebugBindings(input());
 
-		input().registerKeyBinding(GLFW_KEY_H, []() {
-			cineris::ResourceManager::get().reloadShaders();
+		input().registerKeyBinding(GLFW_KEY_H, [this]() {
+			resources().reloadShaders();
+
+			auto* textShader = resources().getShader(Paths::Shaders + "text");
+			textRenderer().setShader(textShader);
+
+			showDebugMessage("Reloaded shaders", 2.0);
 		});
 	}
 
@@ -56,6 +62,14 @@ namespace ashmoor {
 			input().getMouseDeltaX() * sensivity,
 			input().getMouseDeltaY() * sensivity
 		);
+
+		if (m_debugMessageTimer > 0.0) {
+			m_debugMessageTimer -= deltaTime;
+			if (m_debugMessageTimer <= 0.0) {
+				m_debugMessage.clear();
+				m_debugMessageTimer = 0.0;
+			}
+		}
 	}
 
 	auto AshmoorCase::onRender() -> void {
@@ -88,13 +102,22 @@ namespace ashmoor {
 		m_pDebugPlayerObj->draw(context);
 
 
+		// text rendering
+
 		glDisable(GL_DEPTH_TEST);
-		textRenderer().renderText("this is a test", 25.f, 50.f, 0.5f, glm::vec3(1.f));
+		if (m_debugMessageTimer > 0.0 && !m_debugMessage.empty()) {
+			textRenderer().renderText(m_debugMessage, 25.f, 50.f, 0.5f, glm::vec4(0.6f, 1.f, 0.6f, m_debugMessageTimer));
+		}
 		glEnable(GL_DEPTH_TEST);
 	}
 
 	auto AshmoorCase::onShutdown() -> void {
 		m_pWorld.reset();
 		m_pPlayerController.reset();
+	}
+
+	auto AshmoorCase::showDebugMessage(const std::string& message, double duration) -> void {
+		m_debugMessage = message;
+		m_debugMessageTimer = duration;
 	}
 }
