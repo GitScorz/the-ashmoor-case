@@ -17,7 +17,28 @@ I’m building everything from scratch using C++, OpenGL, and GLFW, to understan
 The goal for The Ashmoor Case is to create a dark, grounded world with a sense of realism — not photorealistic, but believable enough to immerse the player.
 The focus is on mood, lighting, and subtle environmental storytelling, evoking a feeling of unease and curiosity rather than relying on exaggerated or stylized visuals.
 
+## References
+If the description above doesn’t fully capture the mood, here are some visual references I generated to explore the atmosphere in more detail.
+
+> Visual inspiration only — these are not in-game screenshots or final previews.
+
+| Ambient 1 | Ambient 2 | Main Character |
+|---|---|---|
+| ![ASHMOOR REFERENCE 1](resources/references/image.png) | ![ASHMOOR REFERENCE 2](resources/references/image2.png) | ![ASHMOOR REFERENCE 3](resources/references/image3.png) |
+
+> Generated with ChatGPT Pro 5.5 and used only as visual inspiration.
+
 ## Resources
 
 I plan to create some of the textures, models etc... but some of them are from:
 - https://ambientcg.com/
+
+I also plan to create some music for this project.
+
+## License
+
+This project is available for personal and educational use under the Cineris Non-Commercial License.
+
+You may study, modify, and share the project for non-commercial purposes.
+
+You may not sell this project, sell modified versions, include it in paid products, or otherwise use it commercially without explicit permission from the author.
