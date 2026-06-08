@@ -1,4 +1,5 @@
 #include <cineris/resource_manager.h>
+#include <cineris/logger.h>
 
 namespace cineris {
     auto ResourceManager::getShader(const std::string& name) -> renderer::Shader* {
@@ -25,13 +26,13 @@ namespace cineris {
             shader->reload();
         }
 
-        std::cout << "Shaders reloaded successfully!" << std::endl;
+        LOG_INFO(log::LogChannel::Renderer, "Shaders reloaded successfully!");
     }
 
     auto ResourceManager::reloadTextures() -> void {
         // for (auto& [name, texture] : m_Textures) {
         // }
-        std::cout << "NOT IMPLEMENTED!" << std::endl;
+        LOG_WARN(log::LogChannel::Renderer, "RELOAD TEXTURES NOT IMPLEMENTED!");
     }
 
     auto ResourceManager::reloadAll() -> void {

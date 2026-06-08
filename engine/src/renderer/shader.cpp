@@ -1,5 +1,6 @@
 #include <cineris/renderer/shader.h>
 #include <filesystem>
+#include <cineris/logger.h>
 
 namespace fs = std::filesystem;
 
@@ -45,7 +46,8 @@ namespace cineris::renderer {
         if (!success) {
             char errorLog[512];
             glGetProgramInfoLog(program, 512, NULL, errorLog);
-            std::cout << "Shader linking failed:\n" << errorLog << std::endl;
+            LOG_ERROR(log::LogChannel::Renderer, "Shader linking failed:");
+            std::cout << errorLog << std::endl;
             glDeleteProgram(program);
             deleteShaderModules(vertModule, fragModule);
             return 0;

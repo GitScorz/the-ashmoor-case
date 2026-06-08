@@ -1,13 +1,16 @@
 #include <cineris/application.h>
+#include <cineris/logger.h>
 
 namespace cineris {
 
     Application::Application(const std::string& title) {
+        log::enableConsoleColors();
+
         m_pWindow = std::make_unique<Window>(1440, 720, title.c_str());
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
-            std::cout << "Failed to initialize GLAD." << std::endl;
+            LOG_FATAL(log::LogChannel::Engine, "Failed to initialize GLAD");
             glfwTerminate();
             exit(-1);
         }

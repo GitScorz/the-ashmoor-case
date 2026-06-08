@@ -5,6 +5,7 @@
 #include "debug.h"
 #include <memory>
 #include <array>
+#include <cineris/logger.h>
 
 // TODO: Logging system
 
@@ -22,7 +23,7 @@ namespace ashmoor {
 	AshmoorCase::~AshmoorCase() = default;
 
 	auto AshmoorCase::onInit() -> void {
-		std::cout << "Initialized!" << std::endl;
+		LOG_INFO(cineris::log::LogChannel::Game, "Application started!");
 
 		m_pWorld = std::make_unique<World>();
 		m_pPlayerController = std::make_unique<PlayerController>(camera(), input());

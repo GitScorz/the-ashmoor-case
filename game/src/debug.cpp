@@ -6,6 +6,7 @@
 
 #include "debug.h"
 #include <cstdio>
+#include <cineris/logger.h>
 
 namespace ashmoor::debug {
     bool bInWireframeMode = false;
@@ -21,7 +22,7 @@ namespace ashmoor::debug {
             std::freopen("CONOUT$", "w", stderr);
         #endif
 
-        std::cout << "Debug output ready." << std::endl;
+        LOG_DEBUG(cineris::log::LogChannel::Game, "Debug output ready!");
     }
 
     auto registerDebugBindings(cineris::input::InputManager& pInput) -> void {

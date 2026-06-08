@@ -1,4 +1,5 @@
 #include <cineris/window.h>
+#include <cineris/logger.h>
 
 auto framebuffer_size_callback(GLFWwindow *window, int width, int height) -> void {
   glViewport(0, 0, width, height);
@@ -12,7 +13,7 @@ namespace cineris {
     {
         if (!glfwInit())
         {
-            std::cout << "GLFW couldn't start." << std::endl;
+            LOG_FATAL(log::LogChannel::Engine, "GLFW couldn't start.");
             exit(-1);
         }
 
@@ -27,7 +28,7 @@ namespace cineris {
         m_Handle = glfwCreateWindow(w, h, t.c_str(), NULL, NULL);
         if (!m_Handle)
         {
-            std::cout << "Failed to create GLFW window." << std::endl;
+            LOG_FATAL(log::LogChannel::Engine, "Failed to create GLFW window.");
             glfwTerminate();
             exit(-1);
         }

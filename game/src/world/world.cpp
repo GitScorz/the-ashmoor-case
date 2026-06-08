@@ -3,6 +3,7 @@
 #include "ashmoor_case.h"
 #include "paths.h"
 #include "controllers/player_controller.h"
+#include <cineris/logger.h>
 
 namespace ashmoor {
 
@@ -52,7 +53,7 @@ namespace ashmoor {
             floorAreaSize = std::max(floorAreaSize, static_cast<float>(row.size()));
         }
 
-        std::cout << "floor area size: " << floorAreaSize << std::endl;
+        LOG_DEBUG(cineris::log::LogChannel::Game, "Floor area size:" + std::to_string(floorAreaSize));
 
         renderer::Mesh* floorMesh = renderer::Mesh::createGrid(20.f, 20.f, 100, 100);
         renderer::Material floorMaterial;

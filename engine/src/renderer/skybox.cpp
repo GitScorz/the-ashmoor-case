@@ -1,4 +1,5 @@
 #include <cineris/renderer/skybox.h>
+#include <cineris/logger.h>
 
 float skyboxVertices[] = {
     // positions          
@@ -85,7 +86,7 @@ namespace cineris::renderer {
 
         m_textureID = loadCubemap(faces);
 
-        std::cout << "Loaded skybox!" << std::endl;
+        LOG_INFO(log::LogChannel::Renderer, "Loaded skybox!");
     }
 
     auto Skybox::draw(const glm::mat4& view, const glm::mat4& projection) ->void {
@@ -140,7 +141,7 @@ namespace cineris::renderer {
             }
             else
             {
-                std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+                LOG_ERROR(log::LogChannel::Renderer, "Cubemap texture failed to load at path: " + faces[i]);
                 stbi_image_free(data);
             }
         }

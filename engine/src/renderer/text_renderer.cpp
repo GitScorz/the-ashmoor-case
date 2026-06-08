@@ -1,12 +1,14 @@
 #include <cineris/renderer/text_renderer.h>
 #include <cineris/renderer/texture.h>
+#include <cineris/logger.h>
 
 namespace cineris::renderer {
 
     TextRenderer::TextRenderer(Window* window) : m_pWindow(window)
     {
         if (FT_Init_FreeType(&m_FreeType)) {
-            std::cout << "Coulnd't initialize FreeType" << std::endl;
+
+            LOG_ERROR(log::LogChannel::Renderer, "Couldn't initialize FreeType.");
             return;
         }
     }
@@ -26,8 +28,7 @@ namespace cineris::renderer {
 
     auto TextRenderer::loadFont(const std::string& filepath, unsigned int pixelSize, Shader* shader) -> void {
         if (FT_New_Face(m_FreeType, filepath.c_str(), 0, &m_Face)) {
-            // i should really do a logging system..
-            std::cout << "Couldn't load font" << std::endl;
+            LOG_ERROR(log::LogChannel::Renderer, "Couldn't load font (" + filepath + ")");
             return;
         }
 
@@ -38,7 +39,7 @@ namespace cineris::renderer {
         // todo: later support unicode/utf-8
         for (unsigned char c = 0; c < 128; c++) {
             if (FT_Load_Char(m_Face, c, FT_LOAD_RENDER)) {
-                std::cout << "Failed to load glyph: " << c << " (" << filepath << ")" << std::endl;
+                LOG_ERROR(log::LogChannel::Renderer, "Failed to load glyph: " + std::to_string(c) + " (" + filepath + ")");
                 continue;
             }
 

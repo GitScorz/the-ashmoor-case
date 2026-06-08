@@ -1,5 +1,6 @@
 #include <cineris/renderer/framebuffer.h>
 #include <iostream>
+#include <cineris/logger.h>
 
 namespace cineris::renderer {
 
@@ -63,7 +64,7 @@ namespace cineris::renderer {
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_iWidth, m_iHeight);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cerr << "Framebuffer resize failed to complete!" << std::endl;
+            LOG_ERROR(log::LogChannel::Renderer, "Framebuffer resize failed to complete!");
         }
 
         unbind();
