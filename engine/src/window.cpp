@@ -1,10 +1,6 @@
 #include <cineris/window.h>
 #include <cineris/logger.h>
 
-auto framebuffer_size_callback(GLFWwindow *window, int width, int height) -> void {
-  glViewport(0, 0, width, height);
-}
-
 namespace cineris {
     Window::Window(int w, int h, const std::string& t)
         : m_iWidth(w),
@@ -25,7 +21,7 @@ namespace cineris {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-        m_Handle = glfwCreateWindow(w, h, t.c_str(), NULL, NULL);
+        m_Handle = glfwCreateWindow(w, h, t.c_str(), nullptr, nullptr);
         if (!m_Handle)
         {
             LOG_FATAL(log::LogChannel::Engine, "Failed to create GLFW window.");
@@ -34,7 +30,8 @@ namespace cineris {
         }
 
         glfwMakeContextCurrent(m_Handle);
-        glfwSetFramebufferSizeCallback(m_Handle, framebuffer_size_callback);
+        glfwSetWindowUserPointer(m_Handle, this);
+        glfwSetFramebufferSizeCallback(m_Handle, framebufferSizeCallback);
         glfwSetInputMode(m_Handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
@@ -70,4 +67,20 @@ namespace cineris {
         // }
     }
 
+    auto Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) -> void {
+        auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+        if (self) {
+            self->onFramerbufferResize(width, height);
+        }
+    }
+
+    auto Window::onFramerbufferResize(int width, int height) -> void {
+        glViewport(0, 0, width, height);
+
+        m_iWidth = width;
+        m_iHeight = height;
+
+        m_resizeCallback(width, height);
+    }
 }

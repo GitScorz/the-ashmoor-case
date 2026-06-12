@@ -7,9 +7,6 @@
 #include <array>
 #include <cineris/logger.h>
 
-// TODO: Logging system
-
-
 namespace ashmoor {
 	AshmoorCase::AshmoorCase() 
 		: cineris::Application("The Ashmoor Case") 

@@ -39,6 +39,7 @@ namespace cineris {
         auto render() -> void;
         auto update(double deltaTime) -> void;
         auto processInput() -> void;
+        auto onResize(int width, int height) -> void;
 
         auto calculateDeltaTime() -> double {
             double dCurrentFrame = glfwGetTime();

@@ -15,6 +15,10 @@ namespace cineris {
             exit(-1);
         }
 
+        m_pWindow->setResizeCallback([this](int width, int height) {
+            onResize(width, height);
+        });
+
         m_pCamera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 0.0f));
         m_pInputManager = std::make_unique<input::InputManager>(m_pWindow->m_Handle);
         m_pTextRenderer = std::make_unique<renderer::TextRenderer>(m_pWindow.get());
@@ -74,5 +78,14 @@ namespace cineris {
     auto Application::resources() -> ResourceManager& {
         // singleton
         return ResourceManager::get();
+    }
+
+    auto Application::onResize(int width, int height) -> void {
+        if (width <= 0 || height <= 0) return;
+
+        log::Logger::debug(log::LogChannel::Engine, "Resizing window, new size: " + std::to_string(width) + "x" + std::to_string(height));
+        
+        m_pTextRenderer->updateProjection();
+        // todo: resize framebuffer class
     }
 }
