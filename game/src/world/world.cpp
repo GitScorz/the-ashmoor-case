@@ -1,9 +1,9 @@
 #include "world.h"
-#include <cineris/resource_manager.h>
+#include <cineris/core/resource_manager.h>
 #include "ashmoor_case.h"
 #include "paths.h"
 #include "controllers/player_controller.h"
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace ashmoor {
 
@@ -37,7 +37,7 @@ namespace ashmoor {
                 else if (tile == 'L') {
                     // light source
                     cineris::renderer::Material lightMaterial;
-                    lightMaterial.shader = cineris::ResourceManager::get().getShader(Paths::Shaders + "cube");
+                    lightMaterial.shader = cineris::ResourceManager::get().loadShader("cube", Paths::Shaders + "cube");
                     cineris::renderer::Mesh* lightMesh = cineris::renderer::Mesh::createCube();
                     WorldObject* lightObject = new WorldObject(lightMesh, lightMaterial, glm::vec3(col, row, 0.0f));
                     lightObject->setScale(glm::vec3(0.2f));
@@ -53,12 +53,13 @@ namespace ashmoor {
             floorAreaSize = std::max(floorAreaSize, static_cast<float>(row.size()));
         }
 
-        LOG_DEBUG(cineris::log::LogChannel::Game, "Floor area size:" + std::to_string(floorAreaSize));
+        LOG_DEBUG(cineris::log::LogChannel::Game, "Floor area size: {}", floorAreaSize);
 
         renderer::Mesh* floorMesh = renderer::Mesh::createGrid(20.f, 20.f, 100, 100);
         renderer::Material floorMaterial;
-        floorMaterial.shader = cineris::ResourceManager::get().getShader(Paths::Shaders + "lightning");
-        floorMaterial.albedo = cineris::ResourceManager::get().getTexture(Paths::Textures + "Rocks024L_1K/Rocks024L_1K-PNG_Color.png");
+
+        floorMaterial.shader = cineris::ResourceManager::get().loadShader("lightning", Paths::Shaders + "lightning");
+        floorMaterial.albedo = cineris::ResourceManager::get().loadTexture("basic_rock", Paths::Textures + "Rocks024L_1K/Rocks024L_1K-PNG_Color.png");
         floorMaterial.color = glm::vec3(0.25f, 0.35f, 0.25f);
 
         WorldObject* floorObject = new WorldObject(floorMesh, floorMaterial, glm::vec3(floorAreaSize / 2.0f - 0.5f, levelData.size() / 2.0f - 0.5f, -0.5f));

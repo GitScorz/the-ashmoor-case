@@ -26,25 +26,25 @@ namespace ashmoor {
         vFront.z = 0.0f;
         vRight.z = 0.0f;
 
-        glm::vec3 vMovement(0.0f);
+        m_vMovement = glm::vec3(0.0f);
 
         if (m_Input.isControlPressed(GLFW_KEY_W))
-            vMovement += vFront * m_fSpeed * fDeltaTime;
+            m_vMovement += vFront * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_S))
-            vMovement -= vFront * m_fSpeed * fDeltaTime;
+            m_vMovement -= vFront * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_A))
-            vMovement -= vRight * m_fSpeed * fDeltaTime;
+            m_vMovement -= vRight * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_D))
-            vMovement += vRight * m_fSpeed * fDeltaTime;
+            m_vMovement += vRight * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_E))
-            vMovement += glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
+            m_vMovement += glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_Q))
-            vMovement -= glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
+            m_vMovement -= glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
 
-        if (glm::length(vMovement) > 0.0f)
-            vMovement = glm::normalize(vMovement) * m_fSpeed * fDeltaTime;
+        if (glm::length(m_vMovement) > 0.0f)
+            m_vMovement = glm::normalize(m_vMovement) * m_fSpeed * fDeltaTime;
 
-        glm::vec3 vNewPosition = m_vPosition + vMovement;
+        glm::vec3 vNewPosition = m_vPosition + m_vMovement;
 
         AABB playerBox = getAABBAt(vNewPosition);
 

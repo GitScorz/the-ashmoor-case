@@ -1,6 +1,6 @@
 #include <cineris/renderer/text_renderer.h>
 #include <cineris/renderer/texture.h>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace cineris::renderer {
 
@@ -28,7 +28,7 @@ namespace cineris::renderer {
 
     auto TextRenderer::loadFont(const std::string& filepath, unsigned int pixelSize, Shader* shader) -> void {
         if (FT_New_Face(m_FreeType, filepath.c_str(), 0, &m_Face)) {
-            LOG_ERROR(log::LogChannel::Renderer, "Couldn't load font (" + filepath + ")");
+            LOG_ERROR(log::LogChannel::Renderer, "Couldn't load font ({})", filepath);
             return;
         }
 
@@ -39,7 +39,7 @@ namespace cineris::renderer {
         // todo: later support unicode/utf-8
         for (unsigned char c = 0; c < 128; c++) {
             if (FT_Load_Char(m_Face, c, FT_LOAD_RENDER)) {
-                LOG_ERROR(log::LogChannel::Renderer, "Failed to load glyph: " + std::to_string(c) + " (" + filepath + ")");
+                LOG_ERROR(log::LogChannel::Renderer, "Failed to load glyph: {0} ({1})", c, filepath);
                 continue;
             }
 
@@ -93,9 +93,8 @@ namespace cineris::renderer {
 
         m_pShader = shader;
 
-        if (!m_pShader) {
-            throw std::runtime_error("TextRenderer received null shader");
-        }
+        if (!m_pShader)
+            LOG_ERROR(cineris::log::LogChannel::Renderer, "TextRenderer received null shader");
 
         updateProjection();
     }
@@ -167,7 +166,7 @@ namespace cineris::renderer {
         m_pShader = shader;
 
         if (!m_pShader)
-            throw std::runtime_error("TextRenderer received null shader on reassigning shader");
+            LOG_ERROR(cineris::log::LogChannel::Renderer, "TextRenderer received null shader on reassigning shader");
 
         updateProjection();
     }

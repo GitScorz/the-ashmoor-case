@@ -1,8 +1,19 @@
 #pragma once
-#include <cineris/include.h>
+#include <cineris/core/include.h>
 #include <vector>
 
 namespace cineris::renderer {
+
+	/*struct Vertex {
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec3 texCoords;
+	};*/
+
+	//struct Texture {
+	//	unsigned int id;
+	//	std::string type;
+	//};
 
 	class Mesh {
 	public:
@@ -10,6 +21,7 @@ namespace cineris::renderer {
 		unsigned int VBO, VAO, EBO;
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
+		//std::vector<Texture> textures;
 
 		Mesh(std::vector<float> verts, std::vector<unsigned int> inds);
 		~Mesh();

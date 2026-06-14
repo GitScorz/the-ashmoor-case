@@ -1,6 +1,6 @@
 #include <cineris/renderer/shader.h>
 #include <filesystem>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace fs = std::filesystem;
 

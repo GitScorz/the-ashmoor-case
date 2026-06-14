@@ -1,6 +1,6 @@
 #include <cineris/renderer/framebuffer.h>
 #include <iostream>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace cineris::renderer {
 

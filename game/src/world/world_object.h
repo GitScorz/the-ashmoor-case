@@ -1,5 +1,5 @@
 #pragma once
-#include <cineris/include.h>
+#include <cineris/core/include.h>
 #include <cineris/renderer/mesh.h>
 #include <cineris/renderer/shader.h>
 #include <cineris/renderer/render_context.h>

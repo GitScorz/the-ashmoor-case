@@ -1,4 +1,4 @@
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 #include <iostream>
 
 #ifdef _WIN32
@@ -43,23 +43,6 @@ namespace cineris::log {
 			<< std::endl;
 
 
-	}
-
-	auto Logger::debug(LogChannel channel, const std::string& message) -> void {
-		log(LogLevel::Debug, channel, message);
-	}
-
-	auto Logger::info(LogChannel channel, const std::string& message) -> void {
-		log(LogLevel::Info, channel, message);
-	}
-	auto Logger::warn(LogChannel channel, const std::string& message) -> void {
-		log(LogLevel::Warn, channel, message);
-	}
-	auto Logger::error(LogChannel channel, const std::string& message) -> void {
-		log(LogLevel::Error, channel, message);
-	}
-	auto Logger::fatal(LogChannel channel, const std::string& message) -> void {
-		log(LogLevel::Fatal, channel, message);
 	}
 
 	auto Logger::levelToStr(LogLevel level) -> const char* {

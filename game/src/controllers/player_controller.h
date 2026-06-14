@@ -1,6 +1,6 @@
 #pragma once
-#include <cineris/include.h>
-#include <cineris/camera.h>
+#include <cineris/core/include.h>
+#include <cineris/core/camera.h>
 #include <cineris/input/input_manager.h>
 #include <cineris/math/aabb.h>
 #include "world/world.h"
@@ -24,12 +24,17 @@ namespace ashmoor {
 		auto getVelocity() const -> glm::vec3 { return m_vVelocity; }
 		auto setVelocity(glm::vec3 vVel) -> void { m_vVelocity = vVel; }
 
+		auto isMoving() const -> bool { 
+			return m_vMovement.x > 0 || m_vMovement.y > 0 || m_vMovement.z > 0;
+		}
+
 	private:
 		cineris::Camera& m_Camera;
 		cineris::input::InputManager& m_Input;
 
 		glm::vec3 m_vPosition{};
 		glm::vec3 m_vVelocity{};
+		glm::vec3 m_vMovement{};
 	};
 
 }

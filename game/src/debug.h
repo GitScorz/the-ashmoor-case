@@ -1,5 +1,5 @@
 #pragma once
-#include <cineris/application.h>
+#include <cineris/core/application.h>
 
 namespace ashmoor::debug {
 	extern bool bInWireframeMode;

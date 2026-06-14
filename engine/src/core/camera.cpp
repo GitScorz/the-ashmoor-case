@@ -1,4 +1,4 @@
-#include <cineris/camera.h>
+#include <cineris/core/camera.h>
 #include <iostream>
 
 namespace cineris {

@@ -1,5 +1,5 @@
 #pragma once
-#include <cineris/include.h>
+#include <cineris/core/include.h>
 #include <string>
 
 namespace cineris::renderer {

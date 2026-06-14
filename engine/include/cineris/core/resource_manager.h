@@ -17,8 +17,12 @@ namespace cineris {
 
         ~ResourceManager() = default;
 
-        auto getShader(const std::string& name) -> renderer::Shader*;
-        auto getTexture(const std::string& name) -> renderer::Texture*;
+        auto loadShader(const std::string& id, const std::string& path) -> renderer::Shader*;
+        auto getShader(const std::string& id) -> renderer::Shader*;
+
+        auto loadTexture(const std::string& id, const std::string& path) -> renderer::Texture*;
+        auto getTexture(const std::string& id) -> renderer::Texture*;
+
         auto getCubeMesh() -> renderer::Mesh*;
 
         auto reloadShaders() -> void;

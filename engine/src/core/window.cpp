@@ -1,5 +1,5 @@
-#include <cineris/window.h>
-#include <cineris/logger.h>
+#include <cineris/core/window.h>
+#include <cineris/core/logger.h>
 
 namespace cineris {
     Window::Window(int w, int h, const std::string& t)

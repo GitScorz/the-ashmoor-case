@@ -1,6 +1,6 @@
 #pragma once
-#include <cineris/include.h>
-#include <cineris/window.h>
+#include <cineris/core/include.h>
+#include <cineris/core/window.h>
 #include "freetype.h"
 #include <iostream>
 #include <unordered_map>

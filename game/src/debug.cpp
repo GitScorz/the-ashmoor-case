@@ -6,7 +6,7 @@
 
 #include "debug.h"
 #include <cstdio>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace ashmoor::debug {
     bool bInWireframeMode = false;

@@ -1,5 +1,5 @@
 #pragma once
-#include <cineris/application.h>
+#include <cineris/core/application.h>
 #include <cineris/renderer/skybox.h>
 #include "world/world.h"
 #include "controllers/player_controller.h"

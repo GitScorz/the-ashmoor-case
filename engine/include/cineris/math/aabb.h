@@ -1,5 +1,5 @@
 #pragma once
-#include <cineris/include.h>
+#include <cineris/core/include.h>
 
 struct AABB {
   glm::vec3 min;

@@ -1,11 +1,11 @@
 #include "ashmoor_case.h"
-#include <cineris/resource_manager.h>
+#include <cineris/core/resource_manager.h>
 #include "world/level_loader.h"
 #include "paths.h"
 #include "debug.h"
 #include <memory>
 #include <array>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 namespace ashmoor {
 	AshmoorCase::AshmoorCase() 
@@ -25,10 +25,10 @@ namespace ashmoor {
 		m_pWorld = std::make_unique<World>();
 		m_pPlayerController = std::make_unique<PlayerController>(camera(), input());
 
-		auto* shader = resources().getShader(Paths::Shaders + "text");
+		auto* shader = resources().loadShader("main_text", Paths::Shaders + "text");
 		textRenderer().loadFont(Paths::Fonts + "palr45w.ttf", 48, shader);
 
-		auto* skyboxShader = resources().getShader(Paths::Shaders + "skybox");
+		auto* skyboxShader = resources().loadShader("skybox", Paths::Shaders + "skybox");
 
 		std::array<std::string, 6> faces = {
 			Paths::Textures + "skybox_faces/right.png",
@@ -43,8 +43,8 @@ namespace ashmoor {
 
 		renderer::Mesh* playerMesh = resources().getCubeMesh();
 		renderer::Material playerMaterial;
-		playerMaterial.shader = resources().getShader(Paths::Shaders + "lightning");
-		playerMaterial.albedo = resources().getTexture(Paths::Textures + "black.png");
+		playerMaterial.shader = resources().loadShader("lightning", Paths::Shaders + "lightning");
+		playerMaterial.albedo = resources().loadTexture("black_texture", Paths::Textures + "black.png");
 		playerMaterial.color = glm::vec3(1.0f, 0.5f, 0.31f);
 
 		m_pDebugPlayerObj = std::make_unique<WorldObject>(playerMesh, playerMaterial, glm::vec3(0.0f));
@@ -58,7 +58,7 @@ namespace ashmoor {
 		input().registerKeyBinding(GLFW_KEY_H, [this]() {
 			resources().reloadShaders();
 
-			auto* textShader = resources().getShader(Paths::Shaders + "text");
+			auto* textShader = resources().loadShader("main_text", Paths::Shaders + "text");
 			textRenderer().setShader(textShader);
 
 			showDebugMessage("Reloaded shaders", 2.0);

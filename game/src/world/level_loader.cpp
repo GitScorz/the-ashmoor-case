@@ -1,7 +1,7 @@
 #include "level_loader.h"
 #include <paths.h>
 #include <iostream>
-#include <cineris/logger.h>
+#include <cineris/core/logger.h>
 
 // maybe move this to engine
 namespace ashmoor {
@@ -11,7 +11,7 @@ namespace ashmoor {
         std::ifstream file(fullPath);
 
         if (!file.is_open()) {
-            LOG_ERROR(cineris::log::LogChannel::Game, "Failed to open level file: " + fullPath);
+            LOG_ERROR(cineris::log::LogChannel::Game, "Failed to open level file: {}", fullPath);
             return {};
         }
 
@@ -22,7 +22,7 @@ namespace ashmoor {
                 lines.push_back(line);
         }
 
-        LOG_DEBUG(cineris::log::LogChannel::Game, "Loaded level: \"" + fileName + "\" successfully");
+        LOG_DEBUG(cineris::log::LogChannel::Game, "Loaded level: {} successfully", fileName);
 
         return lines;
     }

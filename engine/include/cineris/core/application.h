@@ -1,12 +1,12 @@
 #pragma once
 #include "include.h"
-#include <cineris/camera.h>
-#include <cineris/window.h>
+#include <cineris/core/camera.h>
+#include <cineris/core/window.h>
 #include <cineris/renderer/shader.h>
 #include <cineris/renderer/texture.h>
 #include <cineris/renderer/text_renderer.h>
 #include <cineris/input/input_manager.h>
-#include <cineris/resource_manager.h>
+#include <cineris/core/resource_manager.h>
 
 namespace cineris {
 

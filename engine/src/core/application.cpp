@@ -1,5 +1,5 @@
-#include <cineris/application.h>
-#include <cineris/logger.h>
+#include <cineris/core/application.h>
+#include <cineris/core/logger.h>
 
 namespace cineris {
 
@@ -83,7 +83,7 @@ namespace cineris {
     auto Application::onResize(int width, int height) -> void {
         if (width <= 0 || height <= 0) return;
 
-        log::Logger::debug(log::LogChannel::Engine, "Resizing window, new size: " + std::to_string(width) + "x" + std::to_string(height));
+        log::Logger::debug(log::LogChannel::Engine, "Resizing window, new size: {0}x{1})", width, height);
         
         m_pTextRenderer->updateProjection();
         // todo: resize framebuffer class
