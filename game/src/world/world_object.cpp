@@ -3,38 +3,23 @@
 namespace ashmoor {
 
     auto WorldObject::draw(const RenderContext& context) -> void {
-        m_material.bind();
-
         auto* shader = m_material.shader;
         if (!shader || !m_pMesh) {
             return;
         }
 
+        shader->use();
         shader->setMat4("model", getModelMatrix());
-        shader->setMat4("view", context.view);
-        shader->setMat4("projection", context.projection);
-        shader->setVec3("viewPos", context.viewPos);
-        shader->setVec3("lightColor", context.lightColor);
-        shader->setBool("isLightSource", isLightSource());
 
-        shader->setInt("skybox", 0);
+        applyCameraUniforms(shader, context);
 
-        shader->setInt("uFogEnabled", context.fog.bEnabled ? 1 : 0);
-        shader->setVec3("uFogColor", context.fog.v_Color);
-        shader->setFloat("uFogDensity", context.fog.fDensity);
-        shader->setFloat("uFogStart", context.fog.fStart);
-        shader->setFloat("uFogEnd", context.fog.fEnd);
-
-        int lightCount = static_cast<int>(context.lightPositions.size());
-        if (lightCount > RenderContext::MAX_LIGHTS) {
-            lightCount = RenderContext::MAX_LIGHTS;
-        }
-        shader->setInt("lightCount", lightCount);
-
-        for (int i = 0; i < lightCount; ++i) {
-            shader->setVec3("lightPositions[" + std::to_string(i) + "]", context.lightPositions[i]);
+        if (!isLightSource()) {
+            //shader->setInt("skybox", 0);
+            applyLightingUniforms(shader, context);
+            applyFogUniforms(shader, context);
         }
 
+        m_material.bind();
         m_pMesh->draw();
     }
 
@@ -53,5 +38,45 @@ namespace ashmoor {
         glm::vec3 outMin = m_Position - m_Scale;
         glm::vec3 outMax = m_Position + m_Scale;
         return { outMin, outMax };
+    }
+
+    auto WorldObject::applyCameraUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+        shader->setMat4("view", context.view);
+        shader->setMat4("projection", context.projection);
+        shader->setVec3("viewPos", context.viewPos);
+    }
+
+    auto WorldObject::applyLightingUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+        shader->setVec3("uAmbientColor", glm::vec3(0.20f, 0.24f, 0.30f));
+        shader->setFloat("uAmbientStrength", 0.18f);
+
+        shader->setBool("isLightSource", isLightSource());
+        shader->setVec3("lightColor", context.lightColor);
+
+        int lightCount = static_cast<int>(context.lightPositions.size());
+        if (lightCount > RenderContext::MAX_LIGHTS) {
+            lightCount = RenderContext::MAX_LIGHTS;
+        }
+        shader->setInt("lightCount", lightCount);
+
+        for (int i = 0; i < lightCount; ++i) {
+            shader->setVec3("lightPositions[" + std::to_string(i) + "]", context.lightPositions[i]);
+
+            if (i < static_cast<int>(context.lightColors.size())) {
+                shader->setVec3("lightColors[" + std::to_string(i) + "]", context.lightColors[i]);
+            } else {
+                shader->setVec3("lightColors[" + std::to_string(i) + "]", context.lightColor);
+            }
+        }
+    }
+
+    auto WorldObject::applyFogUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+        shader->setInt("uFogEnabled", context.fog.enabled ? 1 : 0);
+        if (context.fog.enabled) {
+            shader->setVec3("uFogColor", context.fog.color);
+            shader->setFloat("uFogDensity", context.fog.density);
+            shader->setFloat("uFogStart", context.fog.start);
+            shader->setFloat("uFogEnd", context.fog.end);
+        }
     }
 }

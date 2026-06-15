@@ -86,7 +86,7 @@ namespace cineris::renderer {
 
         m_textureID = loadCubemap(faces);
 
-        LOG_INFO(log::LogChannel::Renderer, "Loaded skybox!");
+        LOG_DEBUG(log::LogChannel::Renderer, "Loaded skybox!");
     }
 
     auto Skybox::draw(const glm::mat4& view, const glm::mat4& projection) ->void {
@@ -107,6 +107,8 @@ namespace cineris::renderer {
 
         m_pShader->setMat4("view", skyboxView);
         m_pShader->setMat4("projection", projection);
+        m_pShader->setVec3("uSkyTint", glm::vec3(0.35f, 0.40f, 0.48f));
+        m_pShader->setFloat("uSkyExposure", 0.18f);
 
         glBindVertexArray(m_VAO);
         glActiveTexture(GL_TEXTURE0);

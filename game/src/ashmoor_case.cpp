@@ -1,6 +1,6 @@
 #include "ashmoor_case.h"
 #include <cineris/core/resource_manager.h>
-#include "world/level_loader.h"
+#include <cineris/core/level_loader.h>
 #include "paths.h"
 #include "debug.h"
 #include <memory>
@@ -9,7 +9,7 @@
 
 namespace ashmoor {
 	AshmoorCase::AshmoorCase() 
-		: cineris::Application("The Ashmoor Case") 
+		: cineris::Application("Ashmoor Case") 
 	{
 		debug::setupDebugConsole();
 
@@ -43,14 +43,22 @@ namespace ashmoor {
 
 		renderer::Mesh* playerMesh = resources().getCubeMesh();
 		renderer::Material playerMaterial;
-		playerMaterial.shader = resources().loadShader("lightning", Paths::Shaders + "lightning");
+		playerMaterial.shader = resources().loadShader("lit_textured", Paths::Shaders + "lit_textured");
 		playerMaterial.albedo = resources().loadTexture("black_texture", Paths::Textures + "black.png");
 		playerMaterial.color = glm::vec3(1.0f, 0.5f, 0.31f);
 
 		m_pDebugPlayerObj = std::make_unique<WorldObject>(playerMesh, playerMaterial, glm::vec3(0.0f));
 
-		auto level = LevelLoader::load("ashmoor_entrance");
-		m_pWorld->loadLevel(m_pPlayerController.get(), level);
+		cineris::Scene scene;
+		cineris::LevelLoader loader;
+
+		const char* levelName = "test_level.json";
+		if (!loader.load(Paths::Levels, levelName, scene)) {
+			LOG_ERROR(cineris::log::LogChannel::Game, "Couldn't load level {}", levelName);
+		}
+		else {
+			m_pWorld->loadScene(m_pPlayerController.get(), scene);
+		}
 
 		// binds
 		debug::registerDebugBindings(input());
@@ -94,26 +102,40 @@ namespace ashmoor {
 		glm::mat4 view = camera().getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(70.0f), windowWidth / windowHeight, 0.1f, 100.0f);
 
-		RenderContext context = {
-		  view,
-		  projection,
-		  camera().getPosition(),
-		  m_pWorld->getLightPositions(),
-		  glm::vec3(1.0f, 1.0f, 1.0f),
-		  FogSettings{
-			true,
-			glm::vec3(0.18f, 0.20f, 0.19f),
-			0.08f,
-			0.0f,
-			25.0f
-		  }
-		};
+		FogSettings fogSettings;
+		fogSettings.color = glm::vec3(0.07f, 0.08f, 0.09f);
+		fogSettings.density = 0.045f;
+		fogSettings.start = 0.0f;
+		fogSettings.end = 25.0f;
+
+		RenderContext context;
+		context.view = view;
+		context.projection = projection;
+		context.viewPos = camera().getPosition();
+		context.lightPositions = m_pWorld->getLightPositions();
+		context.lightColors = m_pWorld->getLightColors();
+		context.lightColor = glm::vec3(1.0f, 0.98f, 0.19f);
+		context.fog = fogSettings;
+		context.ambientColor = glm::vec3(0.20f, 0.24f, 0.30f);
+		context.ambientStrength = 0.18f;
+
+		static bool logged = false;
+		if (!logged && !context.lightPositions.empty()) {
+			LOG_INFO(cineris::log::LogChannel::Game, "Lights loaded: {}", context.lightPositions.size());
+			for (size_t i = 0; i < context.lightPositions.size(); ++i) {
+				auto& pos = context.lightPositions[i];
+				auto& col = context.lightColors[i];
+				LOG_INFO(cineris::log::LogChannel::Game, "  Light {}: pos({}, {}, {}) color({}, {}, {})", 
+					i, pos.x, pos.y, pos.z, col.r, col.g, col.b);
+			}
+			logged = true;
+		}
+
+		m_Skybox.draw(view, projection);
 
 		m_pDebugPlayerObj->setPosition(m_pPlayerController->getPosition());
 		m_pWorld->draw(context);
 		m_pDebugPlayerObj->draw(context);
-
-		m_Skybox.draw(view, projection);
 
 		// text rendering
 		glDisable(GL_DEPTH_TEST);

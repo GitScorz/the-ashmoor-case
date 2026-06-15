@@ -16,55 +16,139 @@ namespace ashmoor {
         m_Objects.clear();
     }
 
-    auto World::loadLevel(PlayerController* playerController, const std::vector<std::string>& levelData) -> void {
+    auto World::clearObjects() -> void {
+        for (WorldObject* obj : m_Objects) {
+            delete obj;
+        }
+
+        m_Objects.clear();
+    }
+
+    auto World::getObjectFromId(int id) -> WorldObject* {
+        for (WorldObject* obj : m_Objects) {
+            if (obj->getId() == id) {
+                return obj;
+            }
+        }
+        return nullptr;
+    }
+
+    auto World::draw(const RenderContext& context) -> void {
+        for (WorldObject* obj : m_Objects) {
+             /*std::cout << "Drawing object at position: (" << obj->getPosition().x << ", " << obj->getPosition().y << ", " << obj->getPosition().z << ")" << std::endl;
+             std::cout << "drawing object with id: " << obj->getId() << std::endl;*/
+            obj->draw(context);
+        }
+    }
+
+    auto World::loadScene(PlayerController* pController, const cineris::Scene& scene) -> void {
         clearObjects();
 
-        for (size_t row = 0; row < levelData.size(); ++row) {
-            const std::string& levelRow = levelData[row];
-            for (size_t col = 0; col < levelRow.size(); ++col) {
-                char tile = levelRow[col];
-                if (tile == '#') {
-                    // Mesh* wallMesh = ResourceManager::get().getCubeMesh();
-                    // Shader* wallShader = ResourceManager::get().getShader(Paths::Shaders + "lightning");
-                    // WorldObject* wallObject = new WorldObject(wallMesh, wallShader, nullptr, glm::vec3(col, row, 0.0f));
-                    // wallObject->setObjectColor(glm::vec3(0.6f, 0.6f, 0.65f));
-                    // addObject(wallObject);
-                }
-                else if (tile == 'P') {
-                    // start position
-                    playerController->setPosition(glm::vec3(col, row, 0.0f));
-                }
-                else if (tile == 'L') {
-                    // light source
-                    cineris::renderer::Material lightMaterial;
-                    lightMaterial.shader = cineris::ResourceManager::get().loadShader("cube", Paths::Shaders + "cube");
-                    cineris::renderer::Mesh* lightMesh = cineris::renderer::Mesh::createCube();
-                    WorldObject* lightObject = new WorldObject(lightMesh, lightMaterial, glm::vec3(col, row, 0.0f));
-                    lightObject->setScale(glm::vec3(0.2f));
-                    lightObject->setIsLightSource(true);
-                    addObject(lightObject);
+        for (const auto& obj : scene.getObjects()) {
+            cineris::renderer::Mesh* mesh = nullptr;
+
+            if (obj.type == cineris::GameObjectType::Cube) {
+                mesh = cineris::ResourceManager::get().getCubeMesh();
+            }
+            else if (obj.type == cineris::GameObjectType::Plane) {
+                mesh = cineris::renderer::Mesh::createGrid(100.0f, 100.0f, 200, 200);
+            }
+            else if (obj.type == cineris::GameObjectType::Model) {
+                LOG_ERROR(cineris::log::LogChannel::Game, "Model loading not implemented yet");
+                continue;
+            }
+            else if (obj.type == cineris::GameObjectType::Player) {
+                pController->setPosition(obj.transform.position);
+                continue;
+            }
+
+            cineris::renderer::Material material;
+            // maybe set the shader on level file?
+            material.shader = cineris::ResourceManager::get().loadShader("lit_textured", Paths::Shaders + "lit_textured");
+
+            if (!obj.textureId.empty()) {
+                // remove texture format
+                std::string textureId = obj.textureId;
+                size_t pos = textureId.find_first_of('.');
+                if (pos != std::string::npos)
+                    textureId = textureId.substr(0, pos);
+
+                material.albedo = cineris::ResourceManager::get().loadTexture(textureId, Paths::Textures + obj.textureId);
+                material.color = glm::vec3(1.0f);
+
+                WorldObject* worldObj = new WorldObject(mesh, material, obj.transform.position);
+                worldObj->setRotation(obj.transform.rotation);
+                worldObj->setScale(obj.transform.scale);
+
+                addObject(worldObj);
+            }
+        }
+
+        for (const auto& light : scene.getLights()) {
+            cineris::renderer::Material lightMaterial;
+            lightMaterial.shader = cineris::ResourceManager::get().loadShader("unlit", Paths::Shaders + "unlit");
+            lightMaterial.color = light.color;
+
+            cineris::renderer::Mesh* lightMesh = cineris::ResourceManager::get().getCubeMesh();
+            WorldObject* lightObj = new WorldObject(lightMesh, lightMaterial, light.position);
+
+            lightObj->setScale(glm::vec3(0.3f));
+            lightObj->setIsLightSource(true);
+            lightObj->setLightColor(light.color);
+
+            addObject(lightObj);
+        }
+
+        LOG_DEBUG(
+            cineris::log::LogChannel::Game,
+            "Loaded scene into world: {} objects, {} lights",
+            scene.getObjects().size(),
+            scene.getLights().size()
+        );
+    }
+
+    auto World::getLightPositions(int maxLights) const -> std::vector<glm::vec3> {
+        std::vector<glm::vec3> lights;
+        lights.reserve(maxLights);
+
+        for (WorldObject* obj : m_Objects) {
+            if (obj->isLightSource()) {
+                lights.push_back(obj->getPosition());
+                if (static_cast<int>(lights.size()) >= maxLights) {
+                    break;
                 }
             }
         }
 
-        float floorAreaSize = 0.f;
+        return lights;
+    }
 
-        for (const std::string& row : levelData) {
-            floorAreaSize = std::max(floorAreaSize, static_cast<float>(row.size()));
+    auto World::getLightColors(int maxLights) const -> std::vector<glm::vec3> {
+        std::vector<glm::vec3> colors;
+        colors.reserve(maxLights);
+
+        for (WorldObject* obj : m_Objects) {
+            if (obj->isLightSource()) {
+                colors.push_back(obj->getLightColor());
+                if (static_cast<int>(colors.size()) >= maxLights) {
+                    break;
+                }
+            }
         }
 
-        LOG_DEBUG(cineris::log::LogChannel::Game, "Floor area size: {}", floorAreaSize);
+        return colors;
+    }
 
-        renderer::Mesh* floorMesh = renderer::Mesh::createGrid(20.f, 20.f, 100, 100);
-        renderer::Material floorMaterial;
-
-        floorMaterial.shader = cineris::ResourceManager::get().loadShader("lightning", Paths::Shaders + "lightning");
-        floorMaterial.albedo = cineris::ResourceManager::get().loadTexture("basic_rock", Paths::Textures + "Rocks024L_1K/Rocks024L_1K-PNG_Color.png");
-        floorMaterial.color = glm::vec3(0.25f, 0.35f, 0.25f);
-
-        WorldObject* floorObject = new WorldObject(floorMesh, floorMaterial, glm::vec3(floorAreaSize / 2.0f - 0.5f, levelData.size() / 2.0f - 0.5f, -0.5f));
-        floorObject->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
-        addObject(floorObject);
+    auto World::collides(const AABB& box) -> bool {
+        /*for (WorldObject* obj : m_Objects) {
+            AABB objBox = obj->getAABB();
+            if (box.min.x <= objBox.max.x && box.max.x >= objBox.min.x &&
+                box.min.y <= objBox.max.y && box.max.y >= objBox.min.y &&
+                box.min.z <= objBox.max.z && box.max.z >= objBox.min.z) {
+                return true;
+            }
+        }*/
+        return false;
     }
 
 }

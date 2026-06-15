@@ -2,6 +2,7 @@
 #include <vector>
 #include "world_object.h"
 #include <cineris/renderer/render_context.h>
+#include <cineris/core/scene.h>
 #include <cineris/math/aabb.h>
 
 namespace ashmoor {
@@ -13,60 +14,22 @@ namespace ashmoor {
         World();
         ~World();
 
-        auto addObject(WorldObject* object) -> void { m_Objects.push_back(object); }
-        auto clearObjects() -> void {
-            for (WorldObject* obj : m_Objects) {
-                delete obj;
-            }
-            m_Objects.clear();
+        auto addObject(WorldObject* object) -> void { 
+            m_Objects.push_back(object); 
         }
 
-        auto getObjectFromId(int id) -> WorldObject* {
-            for (WorldObject* obj : m_Objects) {
-                if (obj->getId() == id) {
-                    return obj;
-                }
-            }
-            return nullptr;
-        }
+        auto clearObjects() -> void;
 
-        auto draw(const RenderContext& context) -> void {
-            for (WorldObject* obj : m_Objects) {
-                // std::cout << "Drawing object at position: (" << obj->m_Position.x << ", " << obj->m_Position.y << ", " << obj->m_Position.z << ")" << std::endl;
-                // std::cout << "drawing object with id: " << obj->m_ObjectId << std::endl;
-                obj->draw(context);
-            }
-        }
+        auto draw(const RenderContext& context) -> void;
 
-        auto loadLevel(PlayerController* playerController, const std::vector<std::string>& levelData) -> void;
+        //auto loadLevel(PlayerController* playerController, const std::vector<std::string>& levelData) -> void;
+        auto loadScene(PlayerController* pController, const cineris::Scene& scene) -> void;
 
-        auto getLightPositions(int maxLights = RenderContext::MAX_LIGHTS) const -> std::vector<glm::vec3> {
-            std::vector<glm::vec3> lights;
-            lights.reserve(maxLights);
+        auto getObjectFromId(int id) -> WorldObject*;
+        auto getLightPositions(int maxLights = RenderContext::MAX_LIGHTS) const -> std::vector<glm::vec3>;
+        auto getLightColors(int maxLights = RenderContext::MAX_LIGHTS) const -> std::vector<glm::vec3>;
 
-            for (WorldObject* obj : m_Objects) {
-                if (obj->isLightSource()) {
-                    lights.push_back(obj->getPosition());
-                    if (static_cast<int>(lights.size()) >= maxLights) {
-                        break;
-                    }
-                }
-            }
-
-            return lights;
-        }
-
-        auto collides(const AABB& box) -> bool {
-            for (WorldObject* obj : m_Objects) {
-                AABB objBox = obj->getAABB();
-                if (box.min.x <= objBox.max.x && box.max.x >= objBox.min.x &&
-                    box.min.y <= objBox.max.y && box.max.y >= objBox.min.y &&
-                    box.min.z <= objBox.max.z && box.max.z >= objBox.min.z) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        auto collides(const AABB& box) -> bool;
     };
 
 }

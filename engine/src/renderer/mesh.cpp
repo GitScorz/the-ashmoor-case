@@ -132,8 +132,8 @@ namespace cineris::renderer {
 
                 float x = uPos * fWidth - fWidth / 2;
                 float z = vPos * fDepth - fDepth / 2;
-                // float y = 0.f;
-                float y = sin(x * 0.3f) * cos(z * 0.3f) * 2.0f;
+                 float y = 0.f;
+                //float y = sin(x * 0.3f) * cos(z * 0.3f) * 2.0f;
 
                 // pos
                 verts.push_back(x);

@@ -83,7 +83,7 @@ namespace cineris {
     auto Application::onResize(int width, int height) -> void {
         if (width <= 0 || height <= 0) return;
 
-        log::Logger::debug(log::LogChannel::Engine, "Resizing window, new size: {0}x{1})", width, height);
+        //LOG_DEBUG(log::LogChannel::Engine, "Resizing window, new size: {0}x{1})", width, height);
         
         m_pTextRenderer->updateProjection();
         // todo: resize framebuffer class
