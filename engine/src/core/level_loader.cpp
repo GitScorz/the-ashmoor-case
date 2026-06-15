@@ -80,6 +80,14 @@ namespace cineris {
                         };
                     }
 
+                    if (objJson.contains("size")) {
+                        const auto& s = objJson["size"];
+                        obj.transform.size = {
+                            s[0].get<float>(),
+                            s[1].get<float>(),
+                        };
+                    }
+
                     obj.visible = objJson.value("visible", true);
 
                     scene.addObject(obj);

@@ -131,19 +131,19 @@ namespace cineris::renderer {
                 float vPos = static_cast<float>(row / static_cast<float>(iRows - 1));
 
                 float x = uPos * fWidth - fWidth / 2;
-                float z = vPos * fDepth - fDepth / 2;
-                 float y = 0.f;
-                //float y = sin(x * 0.3f) * cos(z * 0.3f) * 2.0f;
+                float y = vPos * fDepth - fDepth / 2;
+                float z = 0.f;
+                //float z = sin(x * 0.3f) * cos(y * 0.3f) * 2.0f;
 
-                // pos
+                // pos (X, Y horizontal, Z up)
                 verts.push_back(x);
                 verts.push_back(y);
                 verts.push_back(z);
 
-                // normals
+                // normals (Z+)
+                verts.push_back(0.f);
                 verts.push_back(0.f);
                 verts.push_back(1.f);
-                verts.push_back(0.f);
 
                 // uv
                 verts.push_back(uPos);

@@ -51,7 +51,7 @@ namespace ashmoor {
                 mesh = cineris::ResourceManager::get().getCubeMesh();
             }
             else if (obj.type == cineris::GameObjectType::Plane) {
-                mesh = cineris::renderer::Mesh::createGrid(100.0f, 100.0f, 200, 200);
+                mesh = cineris::renderer::Mesh::createGrid(obj.transform.size.x, obj.transform.size.y, 100, 100);
             }
             else if (obj.type == cineris::GameObjectType::Model) {
                 LOG_ERROR(cineris::log::LogChannel::Game, "Model loading not implemented yet");

@@ -14,6 +14,8 @@ namespace cineris {
 		glm::vec3 position = glm::vec3(0.f);
 		glm::vec3 rotation = glm::vec3(0.f);
 		glm::vec3 scale = glm::vec3(1.f);
+
+		glm::vec2 size = glm::vec2(0.f); // plane
 	};
 
 	struct GameObject {
