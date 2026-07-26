@@ -1,5 +1,6 @@
 #include <cineris/core/resource_manager.h>
 #include <cineris/core/logger.h>
+#include <cineris/assets/model_loader.h>
 
 namespace cineris {
     auto ResourceManager::loadShader(const std::string& id, const std::string& path) -> renderer::Shader* {
@@ -29,6 +30,31 @@ namespace cineris {
         auto it = m_Textures.find(id);
         if (it == m_Textures.end()) {
             LOG_WARN(log::LogChannel::Renderer, "Texture not found: {}", id);
+            return nullptr;
+        }
+        return it->second.get();
+    }
+
+    auto ResourceManager::loadModel(const std::string& id, const std::string& path) -> renderer::Model* {
+        auto it = m_Models.find(id);
+        if (it != m_Models.end()) return it->second.get();
+
+		auto model = assets::ModelLoader::load(path);
+
+        if (!model) {
+            return nullptr;
+        }
+
+        auto* result = model.get();
+        m_Models[id] = std::move(model);
+
+        return result;
+    }
+
+    auto ResourceManager::getModel(const std::string& id) -> renderer::Model* {
+        auto it = m_Models.find(id);
+        if (it == m_Models.end()) {
+            LOG_WARN(log::LogChannel::Renderer, "Model not found: {}", id);
             return nullptr;
         }
         return it->second.get();

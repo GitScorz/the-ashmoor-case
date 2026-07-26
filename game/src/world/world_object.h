@@ -5,16 +5,19 @@
 #include <cineris/renderer/render_context.h>
 #include <cineris/math/aabb.h>
 #include <cineris/renderer/material.h>
+#include <cineris/renderer/model.h>
 
 namespace ashmoor {
 
     class WorldObject {
     public:
+        cineris::renderer::Model* m_pModel;
         cineris::renderer::Mesh* m_pMesh;
         cineris::renderer::Material m_material;
 
-        WorldObject(cineris::renderer::Mesh* mesh, cineris::renderer::Material material, glm::vec3 pos = glm::vec3(0.0f))
-            : m_pMesh(mesh),
+        WorldObject(cineris::renderer::Model* model, cineris::renderer::Mesh* mesh, cineris::renderer::Material material, glm::vec3 pos = glm::vec3(0.0f))
+            : m_pModel(model),
+            m_pMesh(mesh),
             m_material(material),
             m_Position(pos),
             m_Rotation(0.0f),
@@ -23,6 +26,22 @@ namespace ashmoor {
             static int nextId = 0;
             m_ObjectId = nextId++;
         }
+
+        WorldObject(
+            cineris::renderer::Mesh* mesh,
+            cineris::renderer::Material material,
+            glm::vec3 position = glm::vec3(0.0f)
+        )
+            : WorldObject(nullptr, mesh, material, position)
+        {}
+
+        WorldObject(
+            cineris::renderer::Model* model,
+            cineris::renderer::Material material,
+            glm::vec3 position = glm::vec3(0.0f)
+        )
+            : WorldObject(model, nullptr, material, position)
+        {}
 
         ~WorldObject() = default;
 

@@ -8,7 +8,9 @@ namespace cineris {
         m_vUp(glm::vec3(0.0f, 0.0f, 1.0f)),
         m_fYaw(90.0f),
         m_fPitch(0.0f),
-        m_vTargetOffset(glm::vec3(0.0f, 2.0f, 5.0f))
+        m_vTargetOffset(glm::vec3(0.0f, 2.0f, 4.0f)),
+        m_fDefaultDistance(glm::length(m_vTargetOffset)),
+        m_fZoomDistance(m_fDefaultDistance * 0.5f)
     {
         updateCameraPosition(vTargetPos);
     }
@@ -23,6 +25,26 @@ namespace cineris {
         m_vTarget = vTarget;
         m_vPosition = m_vTarget + m_vTargetOffset;
         m_vFront = glm::normalize(m_vTarget - m_vPosition);
+    }
+
+    auto Camera::zoomIn(float fDeltaTime) -> void {
+        zoomTo(m_fZoomDistance, fDeltaTime);
+    }
+
+    auto Camera::zoomOut(float fDeltaTime) -> void {
+        zoomTo(m_fDefaultDistance, fDeltaTime);
+    }
+
+    auto Camera::zoomTo(float fTargetDistance, float fDeltaTime) -> void {
+        constexpr float fZoomSpeed = 10.0f;
+
+        float fCurrentDistance = glm::length(m_vTargetOffset);
+        if (fCurrentDistance <= 0.0f)
+            return;
+
+        float fBlend = glm::clamp(fZoomSpeed * fDeltaTime, 0.0f, 1.0f);
+        float fNewDistance = glm::mix(fCurrentDistance, fTargetDistance, fBlend);
+        m_vTargetOffset *= fNewDistance / fCurrentDistance;
     }
 
     auto Camera::rotate(float fDeltaYaw, float fDeltaPitch) -> void

@@ -5,7 +5,7 @@ namespace ashmoor {
 
     auto WorldObject::draw(const RenderContext& context) -> void {
         auto* shader = m_material.shader;
-        if (!shader || !m_pMesh) {
+        if (!shader || (!m_pModel && !m_pMesh)) {
             return;
         }
 
@@ -21,7 +21,13 @@ namespace ashmoor {
         }
 
         m_material.bind();
-        m_pMesh->draw();
+
+        if (m_pModel) {
+            m_pModel->draw();
+		}
+		else if (m_pMesh) {
+			m_pMesh->draw();
+		}
     }
 
     auto WorldObject::getModelMatrix() const -> glm::mat4 {
@@ -35,12 +41,21 @@ namespace ashmoor {
     }
 
     auto WorldObject::getAABB() const -> cineris::math::AABB {
-        if (!m_pMesh) return {};
+        if (m_pModel) {
+            return cineris::math::transformAABB(
+                m_pModel->getLocalBounds(),
+                getModelMatrix()
+            );
+        }
 
-        return cineris::math::transformAABB(
-            m_pMesh->getLocalBounds(),
-            getModelMatrix()
-        );
+        if (m_pMesh) {
+            return cineris::math::transformAABB(
+                m_pMesh->getLocalBounds(),
+                getModelMatrix()
+            );
+        }
+
+        return {};
     }
 
     auto WorldObject::applyCameraUniforms(const cineris::renderer::Shader* shader, const RenderContext& context) -> void {

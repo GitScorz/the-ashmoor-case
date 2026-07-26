@@ -19,6 +19,10 @@ namespace cineris::input {
             return glfwGetKey(m_pWindow, key) == GLFW_PRESS;
         }
 
+        auto isMouseButtonPressed(int button) const -> bool {
+            return glfwGetMouseButton(m_pWindow, button) == GLFW_PRESS;
+        }
+
         auto getMouseDeltaX() -> float {
             double xpos, ypos;
             glfwGetCursorPos(m_pWindow, &xpos, &ypos);
@@ -49,4 +53,3 @@ namespace cineris::input {
       float m_fMouseSensitivity = 0.1f;
     };
 }
-

@@ -15,6 +15,11 @@ namespace cineris {
             exit(-1);
         }
 
+        LOG_INFO(log::LogChannel::Engine, "OpenGL version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        LOG_INFO(log::LogChannel::Engine, "GLSL version: {}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+		LOG_INFO(log::LogChannel::Engine, "Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        LOG_INFO(log::LogChannel::Engine, "Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+
         m_pWindow->setResizeCallback([this](int width, int height) {
             onResize(width, height);
         });

@@ -40,11 +40,15 @@ namespace ashmoor {
             m_vMovement += glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
         if (m_Input.isControlPressed(GLFW_KEY_Q))
             m_vMovement -= glm::vec3(0.0f, 0.0f, 1.0f) * m_fSpeed * fDeltaTime;
+        if (m_Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_MIDDLE))
+            m_Camera.zoomIn(fDeltaTime);
+        else
+            m_Camera.zoomOut(fDeltaTime);
 
         if (glm::length(m_vMovement) > 0.0f)
             m_vMovement = glm::normalize(m_vMovement) * m_fSpeed * fDeltaTime;
 
-        // calculate each coordinate so player doesn't stop when detects collision and instead slides
+		// calculate each axis movement separately to avoid getting stuck on walls
         glm::vec3 candidate = m_vPosition;
         candidate.x += m_vMovement.x;
 

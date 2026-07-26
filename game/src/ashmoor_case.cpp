@@ -71,6 +71,30 @@ namespace ashmoor {
 
 			showDebugMessage("Reloaded shaders", 2.0);
 		});
+
+		auto* davidModel = resources().loadModel("david", Paths::Models + "characters/david.glb");
+
+		if (davidModel) {
+			renderer::Material davidMaterial;
+			davidMaterial.shader = resources().loadShader(
+				"lit_textured",
+				Paths::Shaders + "lit_textured"
+			);
+			davidMaterial.color = glm::vec3(0.7f, 0.7f, 0.7f);
+
+			auto* david = new WorldObject(
+				davidModel,
+				nullptr,
+				davidMaterial,
+				glm::vec3(0.0f, 3.0f, 1.3f)
+			);
+
+			david->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			david->setScale(glm::vec3(1.0f));
+			david->setIsCollidable(true);
+
+			m_pWorld->addObject(david);
+		}
 	}
 
 	auto AshmoorCase::onUpdate(double deltaTime) -> void {

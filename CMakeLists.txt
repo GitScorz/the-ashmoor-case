@@ -33,6 +33,7 @@ target_link_libraries(cineris_engine
   PUBLIC
     "${CMAKE_SOURCE_DIR}/dependencies/lib/glfw3.lib"
     "${CMAKE_SOURCE_DIR}/dependencies/lib/freetype.lib"
+    "${CMAKE_SOURCE_DIR}/dependencies/lib/assimp-vc143-mtd.lib"
 )
 
 target_compile_definitions(cineris_engine
@@ -117,5 +118,12 @@ if(WIN32)
             "${CMAKE_SOURCE_DIR}/dependencies/lib/glfw3.dll"
             "$<TARGET_FILE_DIR:cineris_game>"
     COMMENT "Copying GLFW DLL to output folder."
+  )
+
+  add_custom_command(TARGET cineris_game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/dependencies/lib/assimp-vc143-mtd.dll"
+            "$<TARGET_FILE_DIR:cineris_game>"
+    COMMENT "Copying Assimp DLL to output folder."
   )
 endif()

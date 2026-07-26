@@ -6,6 +6,7 @@
 #include <cineris/renderer/shader.h>
 #include <cineris/renderer/mesh.h>
 #include <cineris/renderer/texture.h>
+#include <cineris/renderer/model.h>
 
 namespace cineris {
     class ResourceManager {
@@ -23,6 +24,9 @@ namespace cineris {
         auto loadTexture(const std::string& id, const std::string& path) -> renderer::Texture*;
         auto getTexture(const std::string& id) -> renderer::Texture*;
 
+		auto loadModel(const std::string& id, const std::string& path) -> renderer::Model*;
+		auto getModel(const std::string& id) -> renderer::Model*;
+
         auto getCubeMesh() -> renderer::Mesh*;
 
         auto reloadShaders() -> void;
@@ -35,6 +39,7 @@ namespace cineris {
         std::unordered_map<std::string, std::unique_ptr<renderer::Shader>> m_Shaders;
         std::unordered_map<std::string, std::unique_ptr<renderer::Texture>> m_Textures;
         std::unique_ptr<renderer::Mesh> m_CubeMesh;
+        std::unordered_map<std::string, std::unique_ptr<renderer::Model>> m_Models;
     };
 
 }
