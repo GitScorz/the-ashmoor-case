@@ -12,7 +12,7 @@ namespace ashmoor {
 
     }
 
-    auto PlayerController::getAABBAt(glm::vec3 vPosition) -> AABB {
+    auto PlayerController::getAABBAt(glm::vec3 vPosition) -> cineris::math::AABB {
         return {
             vPosition + glm::vec3(-0.3f, -0.3f, 0.0f),
             vPosition + glm::vec3(0.3f,  0.3f, 1.8f)
@@ -44,12 +44,26 @@ namespace ashmoor {
         if (glm::length(m_vMovement) > 0.0f)
             m_vMovement = glm::normalize(m_vMovement) * m_fSpeed * fDeltaTime;
 
-        glm::vec3 vNewPosition = m_vPosition + m_vMovement;
+        // calculate each coordinate so player doesn't stop when detects collision and instead slides
+        glm::vec3 candidate = m_vPosition;
+        candidate.x += m_vMovement.x;
 
-        AABB playerBox = getAABBAt(vNewPosition);
+        if (!pWorld->collides(getAABBAt(candidate))) {
+            m_vPosition.x = candidate.x;
+        }
 
-        if (!pWorld->collides(playerBox)) {
-            m_vPosition = vNewPosition;
+        candidate = m_vPosition;
+        candidate.y += m_vMovement.y;
+
+        if (!pWorld->collides(getAABBAt(candidate))) {
+            m_vPosition.y = candidate.y;
+        }
+
+        candidate = m_vPosition;
+        candidate.z += m_vMovement.z;
+
+        if (!pWorld->collides(getAABBAt(candidate))) {
+            m_vPosition.z = candidate.z;
         }
 
         m_vPosition += m_vVelocity * fDeltaTime;

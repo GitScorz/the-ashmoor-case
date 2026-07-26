@@ -1,5 +1,6 @@
 #pragma once
 #include <cineris/core/include.h>
+#include <cineris/math/aabb.h>
 #include <vector>
 
 namespace cineris::renderer {
@@ -27,9 +28,17 @@ namespace cineris::renderer {
 		~Mesh();
 		auto draw() -> void;
 
+		[[nodiscard]]
+		auto getLocalBounds() const -> const cineris::math::AABB& {
+			return m_localBounds;
+		}
+
 		static auto createCube() -> Mesh*;
 		static auto createQuad(float fWidth, float fHeight) -> Mesh*;
 		static auto createGrid(float fWidth, float fDepth, int iRows, int iCols) -> Mesh*;
+	private:
+		cineris::math::AABB m_localBounds{};
+
 	};
 
 }

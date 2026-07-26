@@ -39,7 +39,7 @@ namespace ashmoor {
         auto getLightColor() const -> glm::vec3 { return m_LightColor; }
 
         auto getModelMatrix() const -> glm::mat4;
-        auto getAABB() const -> AABB;
+        auto getAABB() const -> cineris::math::AABB;
 
         auto getId() const -> int { return m_ObjectId; }
         auto isCollidable() const -> bool { return m_bIsCollidable; }
@@ -47,9 +47,9 @@ namespace ashmoor {
         auto getRotation() const -> glm::vec3 { return m_Rotation; }
         auto getScale() const -> glm::vec3 { return m_Scale; }
 
-        auto applyCameraUniforms(cineris::renderer::Shader* shader, const RenderContext& content) -> void;
-        auto applyLightingUniforms(cineris::renderer::Shader* shader, const RenderContext& content) -> void;
-        auto applyFogUniforms(cineris::renderer::Shader* shader, const RenderContext& content) -> void;
+        auto applyCameraUniforms(const cineris::renderer::Shader* shader, const RenderContext& content) -> void;
+        auto applyLightingUniforms(const cineris::renderer::Shader* shader, const RenderContext& content) -> void;
+        auto applyFogUniforms(const cineris::renderer::Shader* shader, const RenderContext& content) -> void;
     private:
         glm::vec3 m_Position, m_Rotation, m_Scale;
         int m_ObjectId;

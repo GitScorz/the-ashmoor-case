@@ -1,4 +1,5 @@
 #include "world_object.h"
+#include <cineris/math/aabb.h>
 
 namespace ashmoor {
 
@@ -33,20 +34,22 @@ namespace ashmoor {
         return model;
     }
 
-    auto WorldObject::getAABB() const -> AABB {
-        // TODO: calculate the AABB based on the actual vertices of the mesh lol
-        glm::vec3 outMin = m_Position - m_Scale;
-        glm::vec3 outMax = m_Position + m_Scale;
-        return { outMin, outMax };
+    auto WorldObject::getAABB() const -> cineris::math::AABB {
+        if (!m_pMesh) return {};
+
+        return cineris::math::transformAABB(
+            m_pMesh->getLocalBounds(),
+            getModelMatrix()
+        );
     }
 
-    auto WorldObject::applyCameraUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+    auto WorldObject::applyCameraUniforms(const cineris::renderer::Shader* shader, const RenderContext& context) -> void {
         shader->setMat4("view", context.view);
         shader->setMat4("projection", context.projection);
         shader->setVec3("viewPos", context.viewPos);
     }
 
-    auto WorldObject::applyLightingUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+    auto WorldObject::applyLightingUniforms(const cineris::renderer::Shader* shader, const RenderContext& context) -> void {
         shader->setVec3("uAmbientColor", glm::vec3(0.20f, 0.24f, 0.30f));
         shader->setFloat("uAmbientStrength", 0.18f);
 
@@ -70,7 +73,7 @@ namespace ashmoor {
         }
     }
 
-    auto WorldObject::applyFogUniforms(cineris::renderer::Shader* shader, const RenderContext& context) -> void {
+    auto WorldObject::applyFogUniforms(const cineris::renderer::Shader* shader, const RenderContext& context) -> void {
         shader->setInt("uFogEnabled", context.fog.enabled ? 1 : 0);
         if (context.fog.enabled) {
             shader->setVec3("uFogColor", context.fog.color);

@@ -29,7 +29,7 @@ namespace ashmoor {
         auto getLightPositions(int maxLights = RenderContext::MAX_LIGHTS) const -> std::vector<glm::vec3>;
         auto getLightColors(int maxLights = RenderContext::MAX_LIGHTS) const -> std::vector<glm::vec3>;
 
-        auto collides(const AABB& box) -> bool;
+        auto collides(const cineris::math::AABB& box) -> bool;
     };
 
 }

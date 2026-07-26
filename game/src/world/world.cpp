@@ -139,15 +139,16 @@ namespace ashmoor {
         return colors;
     }
 
-    auto World::collides(const AABB& box) -> bool {
-        /*for (WorldObject* obj : m_Objects) {
-            AABB objBox = obj->getAABB();
-            if (box.min.x <= objBox.max.x && box.max.x >= objBox.min.x &&
-                box.min.y <= objBox.max.y && box.max.y >= objBox.min.y &&
-                box.min.z <= objBox.max.z && box.max.z >= objBox.min.z) {
+    auto World::collides(const cineris::math::AABB& box) -> bool {
+        for (const WorldObject* obj : m_Objects) {
+            if (!obj || !obj->isCollidable()) {
+                continue;
+            }
+
+            if (box.intersects(obj->getAABB())) {
                 return true;
             }
-        }*/
+        }
         return false;
     }
 

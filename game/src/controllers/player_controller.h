@@ -16,7 +16,7 @@ namespace ashmoor {
 		~PlayerController();
 
 		auto update(float fDeltaTime, World* pWorld) -> void;
-		auto getAABBAt(glm::vec3 vPosition) -> AABB;
+		auto getAABBAt(glm::vec3 vPosition) -> cineris::math::AABB;
 
 		auto setPosition(glm::vec3 vPos) -> void { m_vPosition = vPos; }
 		auto getPosition() const -> glm::vec3 { return m_vPosition; }
