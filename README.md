@@ -6,7 +6,7 @@ Cineris is the name of the game engine I’m developing for Ashmoor Case. It’s
 Ashmoor Case is my first game development project. A personal journey into the world of game creation.
 I’ve always wanted to learn how games are made, and this project marks the beginning of that dream.
 
-Inspired by one of my favorite films, Shutter Island, Ashmoor Case will explore mystery, psychological tension, and atmosphere. It will combine cinematic storytelling with interactive gameplay.
+Inspired by one of my favorite films, Shutter Island, Ashmoor Case will explore mystery, psychological tension, and atmosphere.
 
 
 # About the Project
@@ -14,8 +14,7 @@ Inspired by one of my favorite films, Shutter Island, Ashmoor Case will explore 
 This project is both a learning experience and the foundation for a full game.
 I’m building everything from scratch using C++, OpenGL, and GLFW, to understand how rendering, shaders, and game architecture truly work.
 
-The goal for Ashmoor Case is to create a dark, grounded world with a sense of realism — not photorealistic, but believable enough to immerse the player.
-The focus is on mood, lighting, and subtle environmental storytelling, evoking a feeling of unease and curiosity rather than relying on exaggerated or stylized visuals.
+The goal of The Ashmoor Case is to create a dark, grounded world that combines a low-poly visual style with a sense of realism. The focus is on mood, lighting, and subtle environmental storytelling.
 
 ## References
 If the description above doesn’t fully capture the mood, here are some visual references I generated to explore the atmosphere in more detail.
@@ -28,12 +27,64 @@ If the description above doesn’t fully capture the mood, here are some visual 
 
 > Generated with ChatGPT and used only as visual inspiration.
 
-## Resources
+I plan to create some of the textures, models and also music for this game.
 
-I plan to create some of the textures, models etc... but some of them are from:
-- https://ambientcg.com/
+## Setup
+If you want to build Cineris locally, make sure you have the following installed:
+- Git
+- CMake 4.0 or newer
+- C++20-compatible compiler
 
-I also plan to create some music for this project.
+Clone the repository together with its submodules:
+```
+git clone --recursive https://github.com/GitScorz/cineris.git
+cd cineris
+```
+
+If you already cloned the repository without submodules, run:
+```
+git submodule update --init --recursive
+```
+Cineris uses vcpkg to install and manage dependencies.
+
+### macOS
+Bootstrap vcpkg:
+```
+./vendor/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+```
+
+Configure and build the Debug version:
+
+```
+cmake --preset debug
+cmake --build --preset debug
+```
+
+For a Release build trade the word "debug" with "release".
+
+### Windows
+Bootstrap vcpkg:
+
+```
+.\vendor\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+```
+
+Configure and build the Debug version:
+
+```
+cmake --preset debug
+cmake --build --preset debug
+```
+
+For a Release build trade the word "debug" with "release".
+
+The required dependencies are installed automatically during the first CMake configuration. OpenGL is provided by the operating system and does not need to be installed through vcpkg.
+
+The compiled executable will be placed inside the corresponding build directory:
+```
+build/debug/
+build/release/
+```
 
 ## License
 
