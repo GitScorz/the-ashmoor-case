@@ -42,6 +42,7 @@
 
 # build folder
 build
+vcpkg_installed
 
 # mac stuff
 .DS_Store

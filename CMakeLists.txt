@@ -9,8 +9,11 @@ if(MSVC)
 endif()
 
 # Dependencies
-set(CINERIS_DEPS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/dependencies/include")
-set(CINERIS_DEPS_LIB_DIR "${CMAKE_SOURCE_DIR}/dependencies/lib")
+
+find_package(OpenGL REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 # Engine library
 file(GLOB_RECURSE CINERIS_ENGINE_SOURCES CONFIGURE_DEPENDS
@@ -31,40 +34,16 @@ target_include_directories(cineris_engine
 
 target_link_libraries(cineris_engine
   PUBLIC
-    "${CMAKE_SOURCE_DIR}/dependencies/lib/glfw3.lib"
-    "${CMAKE_SOURCE_DIR}/dependencies/lib/freetype.lib"
-    "${CMAKE_SOURCE_DIR}/dependencies/lib/assimp-vc143-mtd.lib"
+    OpenGL::GL
+    glfw
+    Freetype::Freetype
+    assimp::assimp
 )
 
 target_compile_definitions(cineris_engine
   PUBLIC
     CNR_BASE_PATH="${CMAKE_SOURCE_DIR}/"
 )
-
-if(WIN32)
-  target_link_libraries(cineris_engine PUBLIC opengl32)
-elseif(APPLE)
-  find_library(COCOA_LIB Cocoa)
-  find_library(IOKIT_LIB IOKit)
-  find_library(COREVIDEO_LIB CoreVideo)
-  find_library(OPENGL_LIB OpenGL)
-
-  target_link_libraries(cineris_engine PUBLIC
-    ${COCOA_LIB}
-    ${IOKIT_LIB}
-    ${COREVIDEO_LIB}
-    ${OPENGL_LIB}
-  )
-else()
-  target_link_libraries(cineris_engine PUBLIC
-    GL
-    X11
-    pthread
-    Xrandr
-    Xi
-    dl
-  )
-endif()
 
 # Game executable
 
@@ -86,7 +65,7 @@ target_include_directories(cineris_game
     ${CMAKE_SOURCE_DIR}/game/src
 )
 
-# Copy runtime assets
+# Copy runtime assets, dont know if this is the best way to do it, but it works for now
 
 file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
@@ -104,26 +83,3 @@ add_custom_command(TARGET cineris_game POST_BUILD
           "$<TARGET_FILE_DIR:cineris_game>/resources"
   COMMENT "Copying resources to output folder."
 )
-
-if(WIN32)
-  add_custom_command(TARGET cineris_game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/dependencies/lib/freetype.dll"
-            "$<TARGET_FILE_DIR:cineris_game>"
-    COMMENT "Copying FreeType DLL to output folder."
-  )
-
-  add_custom_command(TARGET cineris_game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/dependencies/lib/glfw3.dll"
-            "$<TARGET_FILE_DIR:cineris_game>"
-    COMMENT "Copying GLFW DLL to output folder."
-  )
-
-  add_custom_command(TARGET cineris_game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/dependencies/lib/assimp-vc143-mtd.dll"
-            "$<TARGET_FILE_DIR:cineris_game>"
-    COMMENT "Copying Assimp DLL to output folder."
-  )
-endif()
